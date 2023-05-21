@@ -328,7 +328,7 @@ export default class Enemy extends MarioSprite {
             return;
         }
 
-        if (x + this.width > xTile * 16 && x - this.width < xTile * 16 + 16 && yTile === parseInt((y - 1) / 16)) {
+        if (this.x + this.width > xTile * 16 && this.x - this.width < xTile * 16 + 16 && yTile === parseInt((y - 1) / 16)) {
             this.xa = -this.world.mario.facing * 2;
             this.ya = -5;
             if (this.graphics !== null) {

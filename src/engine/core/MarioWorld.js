@@ -12,6 +12,8 @@ import MarioEvent from "./MarioEvent.js";
 import MarioForwardModel from "./MarioForwardModel.js";
 import Enemy from "../sprites/Enemy.js";
 import FlowerEnemy from "../sprites/FlowerEnemy.js";
+import LifeMushroom from "../sprites/LifeMushroom.js";
+import BulletBill from "../sprites/BulletBill.js";
 
 export default class MarioWorld extends Scene {
     static onlineTimerMax = 100000;
@@ -80,9 +82,9 @@ export default class MarioWorld extends Scene {
         this.load.image('tiles', 'assets/mapsheet.png')
         this.load.spritesheet('mario', 'assets/mariosheet.png', {frameWidth: 32, frameHeight: 32})
         // this.load.image('mario', 'assets/mariosheet.png')
-        this.load.image('item', 'assets/itemsheet.png')
-        this.load.image('particle', 'assets/particlesheet.png')
-        this.load.image('font', 'assets/font.gif')
+        this.load.spritesheet('item', 'assets/itemsheet.png', {frameWidth: 8, frameHeight: 8})
+        this.load.spritesheet('particle', 'assets/particlesheet.png', {frameWidth: 16, frameHeight: 16})
+        this.load.spritesheet('font', 'assets/font.gif', {frameWidth: 8, frameHeight: 8})
         this.load.spritesheet('enemy', 'assets/enemysheet.png', {frameWidth: 16, frameHeight: 32})
         this.load.spritesheet('smallmario', 'assets/smallmariosheet.png', {frameWidth: 16, frameHeight: 16})
         this.load.spritesheet('firemario', 'assets/firemariosheet.png', {frameWidth: 32, frameHeight: 32})
@@ -132,7 +134,6 @@ export default class MarioWorld extends Scene {
     update(t, d) {
         if (this.onUpdate !== null && this.onUpdate !== undefined) {
             this.timeCnt += d
-            console.log(this.timeCnt)
             if(this.timeCnt > this.timeMax){
                 this.timeCnt -= this.timeMax
                 this.onUpdate()
@@ -604,7 +605,7 @@ export default class MarioWorld extends Scene {
         //punishing forward model
         if (this.killEvents !== null) {
             for (let k of this.killEvents) {
-                if (this.lastFrameEvents.contains(k)) {
+                if (this.lastFrameEvents.includes(k)) {
                     //                    if (this.revivable)
                     //                        this.revive();
                     //                    else
@@ -626,14 +627,14 @@ export default class MarioWorld extends Scene {
             this.level.setBlock(xTile, yTile, 14);
             this.level.setShiftIndex(xTile, yTile, 4);
 
-            if (features.contains(TileFeature.SPECIAL)) {
+            if (features.includes(TileFeature.SPECIAL)) {
                 if (!this.mario.isLarge) {
-                    this.addSprite(new Mushroom(this.visuals, xTile * 16 + 9, yTile * 16 + 8));
+                    this.addSprite(new Mushroom(this.visuals, xTile * 16 + 9, yTile * 16 + 8, this));
                 } else {
-                    this.addSprite(new FireFlower(this.visuals, xTile * 16 + 9, yTile * 16 + 8));
+                    this.addSprite(new FireFlower(this.visuals, xTile * 16 + 9, yTile * 16 + 8, this));
                 }
-            } else if (features.contains(TileFeature.LIFE)) {
-                this.addSprite(new LifeMushroom(this.visuals, xTile * 16 + 9, yTile * 16 + 8));
+            } else if (features.includes(TileFeature.LIFE)) {
+                this.addSprite(new LifeMushroom(this.visuals, xTile * 16 + 9, yTile * 16 + 8, this));
             } else {
                 this.mario.collectCoin();
                 if (this.visuals) {
@@ -663,7 +664,7 @@ export default class MarioWorld extends Scene {
 
     bumpInto(xTile, yTile) {
         let block = this.level.getBlock(xTile, yTile);
-        if (TileFeature.getTileType(block).contains(TileFeature.PICKABLE)) {
+        if (TileFeature.getTileType(block).includes(TileFeature.PICKABLE)) {
             this.addEvent(EventType.COLLECT, block);
             this.mario.collectCoin();
             this.level.setBlock(xTile, yTile, 0);

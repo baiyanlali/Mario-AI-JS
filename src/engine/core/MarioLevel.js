@@ -266,10 +266,10 @@ export default class MarioLevel {
             this.exitTileX = this.findFirstFloor(lines, this.exitTileY);
             // console.log("exit tile x", this.exitTileX)
         }
-        for (let y = this.exitTileY; y > Math.max(1, this.exitTileY - 11); y--) {
-            this.levelTiles[this.exitTileX][y] = 40;
+        for (let y = this.exitTileX; y > Math.max(1, this.exitTileX - 11); y--) {
+            this.levelTiles[y][this.exitTileY] = 40;
         }
-        this.levelTiles[this.exitTileX][Math.max(1, this.exitTileY - 11)] = 39;
+        this.levelTiles[Math.max(1, this.exitTileX - 11)][this.exitTileY] = 39;
 
     }
 
@@ -285,11 +285,11 @@ export default class MarioLevel {
         level.exitTileX = this.exitTileX;
         level.exitTileY = this.exitTileY;
         //TODO: fix this
-        level.levelTiles = new int[this.levelTiles.length][this.levelTiles[0].length];
-        level.lastSpawnTime = new int[this.levelTiles.length][this.levelTiles[0].length];
-        level.solidMap = new boolean[this.levelTiles.length][this.levelTiles[0].length];
-        for (x = 0; x < level.levelTiles.length; x++) {
-            for (y = 0; y < level.levelTiles[x].length; y++) {
+        level.levelTiles = New2DArray(this.levelTiles.length, this.levelTiles[0].length, 0);
+        level.lastSpawnTime = New2DArray(this.levelTiles.length, this.levelTiles[0].length, 0);
+        level.solidMap = New2DArray(this.levelTiles.length, this.levelTiles[0].length, false);
+        for (let x = 0; x < level.levelTiles.length; x++) {
+            for (let y = 0; y < level.levelTiles[x].length; y++) {
                 level.levelTiles[x][y] = this.levelTiles[x][y];
                 level.lastSpawnTime[x][y] = this.lastSpawnTime[x][y];
                 level.solidMap[x][y] = this.solidMap[x][y];
@@ -301,7 +301,7 @@ export default class MarioLevel {
 
     isBlocking(xTile, yTile, xa, ya) {
         //xTile 指横着的，代表的是Y， yTile相反
-        let block = this.getBlock(yTile, xTile);
+        let block = this.getBlock(xTile, yTile);
         let features = TileFeature.getTileType(block);
         let blocking = features.includes(TileFeature.BLOCK_ALL);
         blocking |= (ya < 0) && features.includes(TileFeature.BLOCK_UPPER);
@@ -311,6 +311,7 @@ export default class MarioLevel {
     }
 
     getBlock(xTile, yTile) {
+        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0) {
             xTile = 0;
         }
@@ -324,6 +325,7 @@ export default class MarioLevel {
     }
 
     setBlock(xTile, yTile, index) {
+        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -331,6 +333,7 @@ export default class MarioLevel {
     }
 
     setShiftIndex(xTile, yTile, shift) {
+        [xTile, yTile] = [yTile, xTile]
         if (this.graphics == null || xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -338,6 +341,7 @@ export default class MarioLevel {
     }
 
     getSpriteType(xTile, yTile) {
+        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile >= this.tileWidth || yTile >= this.tileHeight) {
             return SpriteType.NONE;
         }
@@ -345,6 +349,7 @@ export default class MarioLevel {
     }
 
     getLastSpawnTick(xTile, yTile) {
+        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return 0;
         }
@@ -352,6 +357,7 @@ export default class MarioLevel {
     }
 
     setLastSpawnTick(xTile, yTile, tick) {
+        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -359,6 +365,7 @@ export default class MarioLevel {
     }
 
     getSpriteCode(xTile, yTile) {
+        [xTile, yTile] = [yTile, xTile]
         return xTile + "_" + yTile + "_" + this.getSpriteType(xTile, yTile)[0]??this.getSpriteType(xTile, yTile);
     }
 
@@ -388,6 +395,7 @@ export default class MarioLevel {
     }
 
     render(og, cameraX, cameraY) {
+        return
         this.graphics.render(og, cameraX, cameraY);
         if (cameraX + MarioGame.width >= this.exitTileY * 16) {
             this.flag.render(og, this.exitTileY * 16 - 8 - cameraX, Math.max(1, this.exitTileX - 11) * 16 + 16 - cameraY);
