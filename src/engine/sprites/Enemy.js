@@ -1,0 +1,376 @@
+import MarioSprite from "../core/MarioSprite.js";
+import { SpriteType } from "../helper/SpriteType.js";
+import {EventType} from "../helper/EventType.js";
+import { GameObjects } from "../../phaser.esm.js";
+
+export default class Enemy extends MarioSprite {
+    static GROUND_INERTIA = 0.89;
+    static AIR_INERTIA = 0.89;
+
+    onGround = false;
+    avoidCliffs = true;
+    winged = true;
+    noFireballDeath;
+
+    runTime;
+    wingTime = 0;
+    wingGraphics = {}
+    graphics = {}
+
+    constructor(visuals, x, y, dir, scene, type) {
+        super(x, y, scene);
+        this.world = scene;
+        this.type = type
+        this.width = 4;
+        this.height = 24;
+        if (this.type !== SpriteType.RED_KOOPA && this.type !== SpriteType.GREEN_KOOPA
+            && this.type !== SpriteType.RED_KOOPA_WINGED && this.type !== SpriteType.GREEN_KOOPA_WINGED) {
+            this.height = 12;
+        }
+        this.winged = this.type[0] % 2 === 1;
+        this.avoidCliffs = this.type === SpriteType.RED_KOOPA || this.type === SpriteType.RED_KOOPA_WINGED;
+        this.noFireballDeath = this.type === SpriteType.SPIKY || this.type === SpriteType.SPIKY_WINGED;
+        this.facing = dir;
+        if (this.facing === 0) {
+            this.facing = 1;
+        }
+
+        // const sprite = this.world.add.sprite(-8, -16, 'enemy').play('enemy-walk')
+        const sprite = new GameObjects.Sprite(this.world, -8, -16, 'enemy', this.type[1])
+        this.add(sprite)
+
+        const wing = new GameObjects.Sprite(this.world, -16, -16, 'enemy', 32)
+        this.add(wing)
+
+        this.world.add.existing(this)
+
+    }
+
+    clone() {
+        let e = new Enemy(false, this.x, this.y, this.facing, this.type);
+        e.xa = this.xa;
+        e.ya = this.ya;
+        e.initialCode = this.initialCode;
+        e.width = this.width;
+        e.height = this.height;
+        e.onGround = this.onGround;
+        e.winged = this.winged;
+        e.avoidCliffs = this.avoidCliffs;
+        e.noFireballDeath = this.noFireballDeath;
+        return e;
+    }
+
+    collideCheck() {
+        if (!this.alive) {
+            return;
+        }
+
+        let xMarioD = this.world.mario.x - this.x;
+        let yMarioD = this.world.mario.y - this.y;
+        if (xMarioD > -this.width * 2 - 4 && xMarioD < this.width * 2 + 4) {
+            if (yMarioD > -this.height && yMarioD < this.world.mario.height) {
+                if (this.type !== SpriteType.SPIKY && this.type !== SpriteType.SPIKY_WINGED && this.type !== SpriteType.ENEMY_FLOWER &&
+                    this.world.mario.ya > 0 && yMarioD <= 0 && (!this.world.mario.onGround || !this.world.mario.wasOnGround)) {
+                    this.world.mario.stomp(this);
+                    if (this.winged) {
+                        this.winged = false;
+                        this.ya = 0;
+                    } else {
+                        if (this.type === SpriteType.GREEN_KOOPA || this.type === SpriteType.GREEN_KOOPA_WINGED) {
+                            this.world.addSprite(new Shell(this.graphics !== null, this.x, this.y, 1, this.initialCode));
+                        } else if (this.type === SpriteType.RED_KOOPA || this.type === SpriteType.RED_KOOPA_WINGED) {
+                            this.world.addSprite(new Shell(this.graphics !== null, this.x, this.y, 0, this.initialCode));
+                        } else if (this.type === SpriteType.GOOMBA || this.type === SpriteType.GOOMBA_WINGED) {
+                            if (this.graphics !== null) {
+                                this.world.addEffect(new SquishEffect(this.x, this.y - 7));
+                            }
+                        }
+                        this.world.addEvent(EventType.STOMP_KILL, this.type[0]);
+                        this.world.removeSprite(this);
+                    }
+                } else {
+                    this.world.addEvent(EventType.HURT, this.type[0]);
+                    this.world.mario.getHurt();
+                }
+            }
+        }
+    }
+
+    updateGraphics() {
+        this.wingTime++;
+        this.wingGraphics.index = 32 + this.wingTime / 4 % 2;
+
+        this.graphics.flipX = this.facing === -1;
+        this.runTime += (Math.abs(this.xa)) + 5;
+
+        let runFrame = (parseInt(this.runTime / 20)) % 2;
+
+        if (!this.onGround) {
+            runFrame = 1;
+        }
+        if (this.winged)
+            runFrame = this.wingTime / 4 % 2;
+
+        this.graphics.index = this.type[1] + runFrame;
+    }
+
+    update() {
+        // console.log("enemy"++" update: x: "+this.x + " y: ", this.y)
+        if (!this.alive) {
+            return;
+        }
+
+        let sideWaysSpeed = 1.75;
+
+        if (this.xa > 2) {
+            this.facing = 1;
+        }
+        if (this.xa < -2) {
+            this.facing = -1;
+        }
+
+        this.xa = this.facing * sideWaysSpeed;
+
+        if (!this.move(this.xa, 0))
+            this.facing = -this.facing;
+        this.onGround = false;
+        this.move(0, this.ya);
+
+        this.ya *= this.winged ? 0.95 : 0.85;
+        if (this.onGround) {
+            this.xa *= Enemy.GROUND_INERTIA;
+        } else {
+            this.xa *= Enemy.AIR_INERTIA;
+        }
+
+        if (!this.onGround) {
+            if (this.winged) {
+                this.ya += 0.6;
+            } else {
+                this.ya += 2;
+            }
+        } else if (this.winged) {
+            this.ya = -10;
+        }
+
+        if (this.graphics !== null) {
+            this.updateGraphics();
+        }
+    }
+
+    move(xa, ya) {
+        while (xa > 8) {
+            if (!this.move(8, 0))
+                return false;
+            xa -= 8;
+        }
+        while (xa < -8) {
+            if (!this.move(-8, 0))
+                return false;
+            xa += 8;
+        }
+        while (ya > 8) {
+            if (!this.move(0, 8))
+                return false;
+            ya -= 8;
+        }
+        while (ya < -8) {
+            if (!this.move(0, -8))
+                return false;
+            ya += 8;
+        }
+
+        let collide = false;
+        if (ya > 0) {
+            if (this.isBlocking(this.x + xa - this.width, this.y + ya, xa, 0))
+                collide = true;
+            else if (this.isBlocking(this.x + xa + this.width, this.y + ya, xa, 0))
+                collide = true;
+            else if (this.isBlocking(this.x + xa - this.width, this.y + ya + 1, xa, ya))
+                collide = true;
+            else if (this.isBlocking(this.x + xa + this.width, this.y + ya + 1, xa, ya))
+                collide = true;
+        }
+        if (ya < 0) {
+            if (this.isBlocking(this.x + xa, this.y + ya - this.height, xa, ya))
+                collide = true;
+            else if (collide || this.isBlocking(this.x + xa - this.width, this.y + ya - this.height, xa, ya))
+                collide = true;
+            else if (collide || this.isBlocking(this.x + xa + this.width, this.y + ya - this.height, xa, ya))
+                collide = true;
+        }
+        if (xa > 0) {
+            if (this.isBlocking(this.x + xa + this.width, this.y + ya - this.height, xa, ya))
+                collide = true;
+            if (this.isBlocking(this.x + xa + this.width, this.y + ya - this.height / 2, xa, ya))
+                collide = true;
+            if (this.isBlocking(this.x + xa + this.width, this.y + ya, xa, ya))
+                collide = true;
+
+            if (this.avoidCliffs && this.onGround
+                && !this.world.level.isBlocking(parseInt((this.x + xa + this.width) / 16), parseInt((this.y) / 16 + 1), xa, 1))
+                collide = true;
+        }
+        if (xa < 0) {
+            if (this.isBlocking(this.x + xa - this.width, this.y + ya - this.height, xa, ya))
+                collide = true;
+            if (this.isBlocking(this.x + xa - this.width, this.y + ya - this.height / 2, xa, ya))
+                collide = true;
+            if (this.isBlocking(this.x + xa - this.width, this.y + ya, xa, ya))
+                collide = true;
+
+            if (this.avoidCliffs && this.onGround
+                && !this.world.level.isBlocking(parseInt((this.x + xa - this.width) / 16), parseInt((this.y) / 16 + 1), xa, 1))
+                collide = true;
+        }
+
+        if (collide) {
+            if (xa < 0) {
+                this.x = parseInt((this.x - this.width) / 16) * 16 + this.width;
+                this.xa = 0;
+            }
+            if (xa > 0) {
+                this.x = parseInt((this.x + this.width) / 16 + 1) * 16 - this.width - 1;
+                this.xa = 0;
+            }
+            if (ya < 0) {
+                this.y = parseInt((this.y - this.height) / 16) * 16 + this.height;
+                this.ya = 0;
+            }
+            if (ya > 0) {
+                this.y = parseInt(this.y / 16 + 1) * 16 - 1;
+                this.onGround = true;
+            }
+            return false;
+        } else {
+            this.x += xa;
+            this.y += ya;
+            return true;
+        }
+    }
+
+    isBlocking(_x, _y, xa, ya) {
+        let x = parseInt(_x / 16);
+        let y = parseInt(_y / 16);
+        if (x === parseInt(this.x / 16) && y === parseInt(this.y / 16))
+            return false;
+
+        let blocking = this.world.level.isBlocking(x, y, xa, ya);
+
+        return blocking;
+    }
+
+    shellCollideCheck(shell) {
+        if (!this.alive) {
+            return false;
+        }
+
+        let xD = shell.x - x;
+        let yD = shell.y - y;
+
+        if (xD > -16 && xD < 16) {
+            if (yD > -this.height && yD < shell.height) {
+                this.xa = shell.facing * 2;
+                this.ya = -5;
+                this.world.addEvent(EventType.SHELL_KILL, this.type[0]);
+                if (this.graphics !== null) {
+                    if (this.type === SpriteType.GREEN_KOOPA || this.type === SpriteType.GREEN_KOOPA_WINGED) {
+                        this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 42, -5));
+                    } else if (this.type === SpriteType.RED_KOOPA || this.type === SpriteType.RED_KOOPA_WINGED) {
+                        this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 41, -5));
+                    } else if (this.type === SpriteType.GOOMBA || this.type === SpriteType.GOOMBA_WINGED) {
+                        this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 44, -5));
+                    } else if (this.type === SpriteType.SPIKY || this.type === SpriteType.SPIKY_WINGED) {
+                        this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 45, -5));
+                    }
+                }
+                this.world.removeSprite(this);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    fireballCollideCheck(fireball) {
+        if (!this.alive) {
+            return false;
+        }
+
+        let xD = fireball.x - x;
+        let yD = fireball.y - y;
+
+        if (xD > -16 && xD < 16) {
+            if (yD > -this.height && yD < fireball.height) {
+                if (noFireballDeath)
+                    return true;
+
+                this.xa = fireball.facing * 2;
+                this.ya = -5;
+                this.world.addEvent(EventType.FIRE_KILL, this.type[0]);
+                if (this.graphics !== null) {
+                    if (this.type === SpriteType.GREEN_KOOPA || this.type === SpriteType.GREEN_KOOPA_WINGED) {
+                        this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 42, -5));
+                    } else if (this.type === SpriteType.RED_KOOPA || this.type === SpriteType.RED_KOOPA_WINGED) {
+                        this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 41, -5));
+                    } else if (this.type === SpriteType.GOOMBA || this.type === SpriteType.GOOMBA_WINGED) {
+                        this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 44, -5));
+                    }
+                }
+                this.world.removeSprite(this);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bumpCheck(xTile, yTile) {
+        if (!this.alive) {
+            return;
+        }
+
+        if (x + this.width > xTile * 16 && x - this.width < xTile * 16 + 16 && yTile === parseInt((y - 1) / 16)) {
+            this.xa = -this.world.mario.facing * 2;
+            this.ya = -5;
+            if (this.graphics !== null) {
+                if (this.type === SpriteType.GREEN_KOOPA || this.type === SpriteType.GREEN_KOOPA_WINGED) {
+                    this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 42, -5));
+                } else if (this.type === SpriteType.RED_KOOPA || this.type === SpriteType.RED_KOOPA_WINGED) {
+                    this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 41, -5));
+                } else if (this.type === SpriteType.GOOMBA || this.type === SpriteType.GOOMBA_WINGED) {
+                    this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 44, -5));
+                } else if (this.type === SpriteType.SPIKY || this.type === SpriteType.SPIKY_WINGED) {
+                    this.world.addEffect(new DeathEffect(this.x, this.y, this.graphics.flipX, 45, -5));
+                }
+            }
+            this.world.removeSprite(this);
+        }
+    }
+
+    render(og) {
+        return
+        if (this.winged) {
+            if (this.type !== SpriteType.RED_KOOPA && this.type !== SpriteType.GREEN_KOOPA && this.type !== SpriteType.RED_KOOPA_WINGED
+                && this.type !== SpriteType.GREEN_KOOPA_WINGED) {
+                this.wingGraphics.flipX = false;
+                this.wingGraphics.render(og, parseInt(this.x - this.world.cameraX - 6), parseInt(this.y - this.world.cameraY - 6));
+                this.wingGraphics.flipX = true;
+                this.wingGraphics.render(og, parseInt(this.x - this.world.cameraX + 22), parseInt(this.y - this.world.cameraY - 6));
+            }
+        }
+
+        this.graphics.render(og, parseInt(this.x - this.world.cameraX), parseInt(this.y - this.world.cameraY));
+
+        if (this.winged) {
+            if (this.type === SpriteType.RED_KOOPA || this.type === SpriteType.GREEN_KOOPA || this.type === SpriteType.RED_KOOPA_WINGED
+                || this.type === SpriteType.GREEN_KOOPA_WINGED) {
+                let shiftX = -1;
+                if (this.graphics.flipX) {
+                    shiftX = 17;
+                }
+                this.wingGraphics.flipX = this.graphics.flipX;
+                this.wingGraphics.render(og, parseInt(this.x - this.world.cameraX + shiftX), parseInt(this.y - this.world.cameraY - 8));
+            }
+        }
+    }
+
+}
