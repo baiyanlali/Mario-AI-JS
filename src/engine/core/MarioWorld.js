@@ -1,6 +1,6 @@
 import MarioGame from "./MarioGame.js";
 import {GameStatus} from "../helper/GameStatus.js";
-import {New2DArray} from "../../Util.js";
+import {New2DArray, Transpose} from "../../Util.js";
 import MarioLevel from "./MarioLevel.js";
 import Mario from "../sprites/Mario.js";
 import {Scene} from "../../phaser.esm.js";
@@ -14,10 +14,12 @@ import Enemy from "../sprites/Enemy.js";
 import FlowerEnemy from "../sprites/FlowerEnemy.js";
 import LifeMushroom from "../sprites/LifeMushroom.js";
 import BulletBill from "../sprites/BulletBill.js";
+import CoinEffect from "../effects/CoinEffect";
 
 export default class MarioWorld extends Scene {
     static onlineTimerMax = 100000;
 
+    static Instance;
 
     gameStatus;
     pauseTimer = 0;
@@ -76,6 +78,8 @@ export default class MarioWorld extends Scene {
         this.kills = 0;
         this.deaths = 0;
         this.deathBuffer = 0;
+
+        MarioWorld.Instance = this;
     }
 
     preload() {
@@ -170,12 +174,11 @@ export default class MarioWorld extends Scene {
         this.level = new MarioLevel(level, this.visuals);
 
 
-        const leveltile = this.make.tilemap({data: this.level.levelTiles, tileWidth: 16, tileHeight: 16})
+        const leveltile = this.make.tilemap({data: Transpose(this.level.levelTiles), tileWidth: 16, tileHeight: 16})
         leveltile.addTilesetImage("tiles", "tiles", 16, 16)
         const currground = leveltile.createLayer(0, "tiles", 0, 0)
 
-        // 这里x和y反过来了
-        this.mario = new Mario(this.visuals, this.level.marioTileY * 16, this.level.marioTileX * 16, this, "mplayer");
+        this.mario = new Mario(this.visuals, this.level.marioTileX * 16, this.level.marioTileY * 16, this, "mplayer");
         this.mario.alive = true;
         this.mario.world = this;
         this.sprites.push(this.mario);
@@ -306,15 +309,15 @@ export default class MarioWorld extends Scene {
     }
 
     revive() {
-        // console.log("revive! from", this.mario.x , this.mario.y)
+        console.log("revive! from", this.mario.x , this.mario.y)
         let newTileX = parseInt(this.mario.x / 16);
         let newTileY = parseInt( this.mario.y / 16);
         let direction = 1;
         let nobreak = true
         while (nobreak) {
-            if (newTileX < this.level.tileHeight) {
+            if (newTileX < this.level.tileWidth) {
                 //for (y = this.level.tileHeight-2; y >= 8; y--) {
-                for (let y = 0; y <= this.level.tileWidth - 2; y++) {
+                for (let y = 0; y <= this.level.tileHeight - 2; y++) {
                     if (this.level.standable(newTileX, y)) {
                         newTileY = y;
                         nobreak = false;
@@ -322,17 +325,15 @@ export default class MarioWorld extends Scene {
                     }
                 }
                 newTileX += direction;
-
             } else {
                 direction = -1;
                 newTileX = this.mario.x / 16;
             }
-
         }
 
         this.mario.x = newTileX * 16.0 + 8;
         this.mario.y = newTileY * 16.0;
-        // console.log("to ", this.mario.x, this.mario.y, "tile Y:", newTileY)
+        console.log("to ", this.mario.x, this.mario.y, "tile Y:", newTileY)
         //Death Buffer
         this.deathBuffer = 50;
 
@@ -679,21 +680,20 @@ export default class MarioWorld extends Scene {
     }
 
     render(og) {
-        return
         for (let i = 0; i < backgrounds.length; i++) {
-            this.backgrounds[i].render(og, parseInt(this.cameraX), parseInt(this.cameraY));
+            this.backgrounds[i].render(this, parseInt(this.cameraX), parseInt(this.cameraY));
         }
         for (let sprite of this.sprites) {
             if (sprite.type === SpriteType.MUSHROOM || sprite.type === SpriteType.LIFE_MUSHROOM ||
                 sprite.type === SpriteType.FIRE_FLOWER || sprite.type === SpriteType.ENEMY_FLOWER) {
-                sprite.render(og);
+                sprite.render(this);
             }
         }
-        this.level.render(og, parseInt(this.cameraX), parseInt(this.cameraY));
+        this.level.render(this, parseInt(this.cameraX), parseInt(this.cameraY));
         for (let sprite of this.sprites) {
             if (sprite.type !== SpriteType.MUSHROOM && sprite.type !== SpriteType.LIFE_MUSHROOM &&
                 sprite.type !== SpriteType.FIRE_FLOWER && sprite.type !== SpriteType.ENEMY_FLOWER) {
-                sprite.render(og);
+                sprite.render(this);
             }
         }
         for (let i = 0; i < this.effects.size(); i++) {
@@ -702,7 +702,7 @@ export default class MarioWorld extends Scene {
                 i--;
                 continue;
             }
-            this.effects.get(i).render(og, this.cameraX, this.cameraY);
+            this.effects.get(i).render(this, this.cameraX, this.cameraY);
         }
     }
 

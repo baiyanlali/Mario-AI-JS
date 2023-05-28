@@ -252,8 +252,8 @@ export default class Mario extends MarioSprite{
             this.xa = 0;
         }
 
-        if (this.x > this.world.level.exitTileY * 16) {
-            this.x = this.world.level.exitTileY * 16;
+        if (this.x > this.world.level.exitTileX * 16) {
+            this.x = this.world.level.exitTileX * 16;
             this.xa = 0;
             this.world.win();
         }

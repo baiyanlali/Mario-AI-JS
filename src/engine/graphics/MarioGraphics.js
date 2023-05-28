@@ -1,4 +1,6 @@
-class MarioGraphics {
+import MarioWorld from "../core/MarioWorld";
+
+export default class MarioGraphics extends Phaser.Sprite.Container{
     visible;
     alpha;
     originX; originY;
@@ -6,6 +8,7 @@ class MarioGraphics {
     width; height;
 
     constructor() {
+        super(MarioWorld.Instance, 0, 0);
         this.visible = true;
         this.alpha = 1;
         this.originX = this.originY = 0;
@@ -13,5 +16,12 @@ class MarioGraphics {
         this.width = this.height = 32;
     }
 
-    render(og, x, y){}
+    render(og, x, y){
+
+        this.x = x
+        this.y = y
+
+        this.scaleX = this.flipX? -1: 1
+        this.scaleY = this.flipY? -1: 1
+    }
 }

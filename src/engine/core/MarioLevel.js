@@ -1,7 +1,8 @@
 import MarioGame from "./MarioGame.js";
 import {New2DArray} from "../../Util.js";
 import {SpriteType} from "../helper/SpriteType.js";
-import { TileFeature } from "../helper/TileFeature.js";
+import {TileFeature} from "../helper/TileFeature.js";
+
 export default class MarioLevel {
 
     width = MarioGame.width;
@@ -30,18 +31,18 @@ export default class MarioLevel {
             return;
         }
         let lines = level.split("\n");
-        this.tileHeight = lines[0].length;
-        this.tileWidth = lines.length;
-        this.width = this.tileHeight * 16;
-        this.height = this.tileWidth * 16;
+        this.tileWidth = lines[0].length;
+        this.tileHeight = lines.length;
+        this.width = this.tileWidth * 16;
+        this.height = this.tileHeight * 16;
         // console.log(level)
         // console.log(lines)
-        this.levelTiles = New2DArray(lines.length, lines[0].length, 0)
-        this.spriteTemplates = New2DArray(lines.length, lines[0].length, SpriteType.NONE)
-        this.lastSpawnTime = New2DArray(lines.length, lines[0].length, -40)
-        this.solidMap = New2DArray(lines.length, lines[0].length, false)
-        for (let x = 0; x < lines.length; x++) {
-            for (let y = 0; y < lines[x].length; y++) {
+        this.levelTiles = New2DArray(this.tileWidth, this.tileHeight, 0)
+        this.spriteTemplates = New2DArray(this.tileWidth, this.tileHeight, SpriteType.NONE)
+        this.lastSpawnTime = New2DArray(this.tileWidth, this.tileHeight, -40)
+        this.solidMap = New2DArray(this.tileWidth, this.tileHeight, false)
+        for (let x = 0; x < this.tileWidth; x++) {
+            for (let y = 0; y < this.tileHeight; y++) {
                 this.levelTiles[x][y] = 0;
                 this.spriteTemplates[x][y] = SpriteType.NONE;
                 this.lastSpawnTime[x][y] = -40;
@@ -50,9 +51,9 @@ export default class MarioLevel {
 
         let marioLocInit = false;
         let exitLocInit = false;
-        for (let x = 0; x < lines.length; x++) {
-            for (let y = 0; y < lines[x].length; y++) {
-                let c = lines[x].charAt(y);
+        for (let x = 0; x < this.tileWidth; x++) {
+            for (let y = 0; y < this.tileHeight; y++) {
+                let c = lines[y].charAt(x);
                 this.solidMap[x][y] = this.isSolid(c);
                 switch (c) {
                     case 'M':
@@ -102,10 +103,10 @@ export default class MarioLevel {
                         //jump through block
                     {
                         let tempIndex = 0;
-                        if (x > 0 && lines[x].charAt(y - 1) === '%') {
+                        if (x > 0 && lines[y].charAt(x - 1) === '%') {
                             tempIndex += 2;
                         }
-                        if (x < this.levelTiles.length - 1 && lines[x].charAt(y + 1) === '%') {
+                        if (x < this.levelTiles.length - 1 && lines[y].charAt(x + 1) === '%') {
                             tempIndex += 1;
                         }
                         this.levelTiles[x][y] = 43 + tempIndex;
@@ -119,10 +120,10 @@ export default class MarioLevel {
                         //bullet bill
                     {
                         let tempIndex = 0;
-                        if (y > 0 && lines[x - 1].charAt(y) === '*') {
+                        if (y > 0 && lines[y - 1].charAt(x) === '*') {
                             tempIndex += 1;
                         }
-                        if (y > 1 && lines[x - 2].charAt(y) === '*') {
+                        if (y > 1 && lines[y - 2].charAt(x) === '*') {
                             tempIndex += 1;
                         }
                         this.levelTiles[x][y] = 3 + tempIndex;
@@ -135,7 +136,7 @@ export default class MarioLevel {
                     case 'b': {
                         //bullet bill neck and body
                         let tempIndex = 0;
-                        if (y > 1 && lines[x - 2].charAt(y) === 'B') {
+                        if (y > 1 && lines[y - 2].charAt(x) === 'B') {
                             tempIndex += 1;
                         }
                         this.levelTiles[x][y] = 4 + tempIndex;
@@ -191,14 +192,14 @@ export default class MarioLevel {
                         //empty Pipe
                         let tempIndex = 0;
                         let singlePipe = false;
-                        if (x < lines[x].length - 1 && Character.toLowerCase(lines[x].charAt(y + 1)) !== 't' &&
-                            x > 0 && Character.toLowerCase(lines[x].charAt(y - 1)) !== 't') {
+                        if (x < lines[y].length - 1 && lines[y].charAt(x + 1).toLowerCase() !== 't' &&
+                            x > 0 && lines[y].charAt(x - 1).toLowerCase() !== 't') {
                             singlePipe = true;
                         }
                         if (x > 0 && (this.levelTiles[x - 1][y] === 18 || this.levelTiles[x - 1][y] === 20)) {
                             tempIndex += 1;
                         }
-                        if (y > 0 && Character.toLowerCase(lines[x - 1].charAt(y)) === 't') {
+                        if (y > 0 && lines[y - 1].charAt(x).toLowerCase() === 't') {
                             if (singlePipe) {
                                 tempIndex += 1;
                             } else {
@@ -215,12 +216,12 @@ export default class MarioLevel {
                     case 'T': {
                         //flower pipe
                         let tempIndex = 0;
-                        let singlePipe = x < lines[x].length - 1 && lines[x].charAt(y + 1).toLowerCase() !== 't' &&
-                            x > 0 && lines[x].charAt(y - 1).toLowerCase() !== 't';
+                        let singlePipe = x < lines[y].length - 1 && lines[y].charAt(x + 1).toLowerCase() !== 't' &&
+                            x > 0 && lines[y].charAt(x - 1).toLowerCase() !== 't';
                         if (x > 0 && (this.levelTiles[x - 1][y] === 18 || this.levelTiles[x - 1][y] === 20)) {
                             tempIndex += 1;
                         }
-                        if (y > 0 && lines[x - 1].charAt(y).toLowerCase() === 't') {
+                        if (y > 0 && lines[y - 1].charAt(x).toLowerCase() === 't') {
                             if (singlePipe) {
                                 tempIndex += 1;
                             } else {
@@ -258,12 +259,12 @@ export default class MarioLevel {
         }
         // TODO: Find first floor may crash
         if (!marioLocInit) {
-            this.marioTileY = 0;
-            this.marioTileX = this.findFirstFloor(lines, this.marioTileY);
+            this.marioTileX = 0;
+            this.marioTileY = this.findFirstFloor(lines, this.marioTileX);
         }
         if (!exitLocInit) {
-            this.exitTileY = lines[0].length - 1;
-            this.exitTileX = this.findFirstFloor(lines, this.exitTileY);
+            this.exitTileX = lines[0].length - 1;
+            this.exitTileY = this.findFirstFloor(lines, this.exitTileX);
             // console.log("exit tile x", this.exitTileX)
         }
         for (let y = this.exitTileX; y > Math.max(1, this.exitTileX - 11); y--) {
@@ -285,11 +286,11 @@ export default class MarioLevel {
         level.exitTileX = this.exitTileX;
         level.exitTileY = this.exitTileY;
         //TODO: fix this
-        level.levelTiles = New2DArray(this.levelTiles.length, this.levelTiles[0].length, 0);
-        level.lastSpawnTime = New2DArray(this.levelTiles.length, this.levelTiles[0].length, 0);
-        level.solidMap = New2DArray(this.levelTiles.length, this.levelTiles[0].length, false);
-        for (let x = 0; x < level.levelTiles.length; x++) {
-            for (let y = 0; y < level.levelTiles[x].length; y++) {
+        level.levelTiles = New2DArray(this.tileWidth, this.tileHeight, 0);
+        level.lastSpawnTime = New2DArray(this.tileWidth, this.tileHeight, 0);
+        level.solidMap = New2DArray(this.tileWidth, this.tileHeight, false);
+        for (let x = 0; x < this.tileWidth; x++) {
+            for (let y = 0; y < this.tileWidth; y++) {
                 level.levelTiles[x][y] = this.levelTiles[x][y];
                 level.lastSpawnTime[x][y] = this.lastSpawnTime[x][y];
                 level.solidMap[x][y] = this.solidMap[x][y];
@@ -300,7 +301,6 @@ export default class MarioLevel {
     }
 
     isBlocking(xTile, yTile, xa, ya) {
-        //xTile 指横着的，代表的是Y， yTile相反
         let block = this.getBlock(xTile, yTile);
         let features = TileFeature.getTileType(block);
         let blocking = features.includes(TileFeature.BLOCK_ALL);
@@ -311,7 +311,7 @@ export default class MarioLevel {
     }
 
     getBlock(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
+        // [xTile, yTile] = [yTile, xTile]
         if (xTile < 0) {
             xTile = 0;
         }
@@ -325,7 +325,7 @@ export default class MarioLevel {
     }
 
     setBlock(xTile, yTile, index) {
-        [xTile, yTile] = [yTile, xTile]
+        // [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -333,7 +333,7 @@ export default class MarioLevel {
     }
 
     setShiftIndex(xTile, yTile, shift) {
-        [xTile, yTile] = [yTile, xTile]
+        // [xTile, yTile] = [yTile, xTile]
         if (this.graphics == null || xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -341,7 +341,7 @@ export default class MarioLevel {
     }
 
     getSpriteType(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
+        // [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile >= this.tileWidth || yTile >= this.tileHeight) {
             return SpriteType.NONE;
         }
@@ -349,7 +349,7 @@ export default class MarioLevel {
     }
 
     getLastSpawnTick(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
+        // [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return 0;
         }
@@ -357,7 +357,7 @@ export default class MarioLevel {
     }
 
     setLastSpawnTick(xTile, yTile, tick) {
-        [xTile, yTile] = [yTile, xTile]
+        // [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -365,8 +365,8 @@ export default class MarioLevel {
     }
 
     getSpriteCode(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
-        return xTile + "_" + yTile + "_" + this.getSpriteType(xTile, yTile)[0]??this.getSpriteType(xTile, yTile);
+        // [xTile, yTile] = [yTile, xTile]
+        return xTile + "_" + yTile + "_" + this.getSpriteType(xTile, yTile)[0] ?? this.getSpriteType(xTile, yTile);
     }
 
     isSolid(c) {
@@ -375,10 +375,10 @@ export default class MarioLevel {
             c === 'S' || c === 'U' || c === 'D' || c === '%' || c === 't' || c === 'T';
     }
 
-    findFirstFloor(lines, y) {
+    findFirstFloor(lines, x) {
         let skipLines = true;
-        for (let i = lines.length - 1; i >= 0; i--) {
-            let c = lines[i].charAt(y);
+        for (let i = lines.height - 1; i >= 0; i--) {
+            let c = lines[i].charAt(x);
             if (this.isSolid(c)) {
                 skipLines = false;
                 continue;
@@ -391,22 +391,18 @@ export default class MarioLevel {
     }
 
     update(cameraX, cameraY) {
-
+        return
     }
 
     render(og, cameraX, cameraY) {
         return
-        this.graphics.render(og, cameraX, cameraY);
-        if (cameraX + MarioGame.width >= this.exitTileY * 16) {
-            this.flag.render(og, this.exitTileY * 16 - 8 - cameraX, Math.max(1, this.exitTileX - 11) * 16 + 16 - cameraY);
-        }
     }
 
-    standable(yTile, xTile) {
+    standable(xTile, yTile) {
 
-        if (xTile >= this.tileHeight)
+        if (yTile >= this.tileHeight)
             return false;
         else
-            return !this.solidMap[xTile][yTile] && this.solidMap[xTile+1][yTile];
+            return !this.solidMap[xTile][yTile] && this.solidMap[xTile][yTile + 1];
     }
 }

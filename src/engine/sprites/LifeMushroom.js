@@ -72,6 +72,8 @@ export default class LifeMushroom extends MarioSprite {
     }
 
     bumpCheck(xTile, yTile) {
+        let x = this.x
+        let y = this.y
         if (!this.alive) {
             return;
         }

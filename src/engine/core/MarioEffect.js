@@ -1,9 +1,13 @@
-export default class MarioEffect {
+import {Assets} from "../helper/Assets";
+import MarioImage from "../graphics/MarioImage";
+
+export default class MarioEffect extends Phaser.Sprite.Container{
      x; y; xv; yv; xa; ya;
      life; startingIndex;
      graphics;
 
     constructor(x, y, xv, yv, xa, ya, startIndex, life) {
+        super();
         this.x = x;
         this.y = y;
         this.xv = xv;
@@ -13,11 +17,15 @@ export default class MarioEffect {
         this.life = life;
 
         this.graphics = new MarioImage(Assets.particles, startIndex);
+
         this.graphics.width = 16;
         this.graphics.height = 16;
         this.graphics.originX = 8;
         this.graphics.originY = 8;
         this.startingIndex = startIndex;
+
+        const sprite = this.scene.add.sprite(0, -8 , 'smallmario')
+
     }
 
     render(og, cameraX, cameraY) {
