@@ -1,4 +1,4 @@
-import MarioEffect from "../core/MarioEffect";
+import MarioEffect from "../core/MarioEffect.js";
 
 export default class CoinEffect extends MarioEffect {
     constructor(x, y) {

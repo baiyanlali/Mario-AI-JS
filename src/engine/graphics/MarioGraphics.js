@@ -1,6 +1,8 @@
-import MarioWorld from "../core/MarioWorld";
+import MarioWorld from "../core/MarioWorld.js";
+import * as Phaser from "../../phaser.esm.js";
 
-export default class MarioGraphics extends Phaser.Sprite.Container{
+
+export default class MarioGraphics extends Phaser.GameObjects.Container{
     visible;
     alpha;
     originX; originY;

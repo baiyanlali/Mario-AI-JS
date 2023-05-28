@@ -1,5 +1,5 @@
-import MarioGraphics from "./MarioGraphics";
-import MarioWorld from "../core/MarioWorld";
+import MarioGraphics from "./MarioGraphics.js";
+import MarioWorld from "../core/MarioWorld.js";
 
 export default class MarioImage extends MarioGraphics {
     sheet;

@@ -5,7 +5,7 @@ export const Assets = {
     enemies: "enemy",
     items: "item",
     level: "level",
-    particles : "particles",
+    particles : "particle",
     font: "font",
     map: "map"
 }

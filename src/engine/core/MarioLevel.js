@@ -267,10 +267,12 @@ export default class MarioLevel {
             this.exitTileY = this.findFirstFloor(lines, this.exitTileX);
             // console.log("exit tile x", this.exitTileX)
         }
-        for (let y = this.exitTileX; y > Math.max(1, this.exitTileX - 11); y--) {
-            this.levelTiles[y][this.exitTileY] = 40;
+        for (let y = this.exitTileY; y > Math.max(1, this.exitTileY - 11); y--) {
+            this.levelTiles[this.exitTileX][y] = 40;
         }
         this.levelTiles[Math.max(1, this.exitTileX - 11)][this.exitTileY] = 39;
+
+        //TODO: Add flag
 
     }
 

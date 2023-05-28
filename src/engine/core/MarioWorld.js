@@ -14,7 +14,7 @@ import Enemy from "../sprites/Enemy.js";
 import FlowerEnemy from "../sprites/FlowerEnemy.js";
 import LifeMushroom from "../sprites/LifeMushroom.js";
 import BulletBill from "../sprites/BulletBill.js";
-import CoinEffect from "../effects/CoinEffect";
+import CoinEffect from "../effects/CoinEffect.js";
 
 export default class MarioWorld extends Scene {
     static onlineTimerMax = 100000;
@@ -309,7 +309,7 @@ export default class MarioWorld extends Scene {
     }
 
     revive() {
-        console.log("revive! from", this.mario.x , this.mario.y)
+        // console.log("revive! from", this.mario.x , this.mario.y)
         let newTileX = parseInt(this.mario.x / 16);
         let newTileY = parseInt( this.mario.y / 16);
         let direction = 1;
@@ -333,7 +333,7 @@ export default class MarioWorld extends Scene {
 
         this.mario.x = newTileX * 16.0 + 8;
         this.mario.y = newTileY * 16.0;
-        console.log("to ", this.mario.x, this.mario.y, "tile Y:", newTileY)
+        // console.log("to ", this.mario.x, this.mario.y, "tile Y:", newTileY)
         //Death Buffer
         this.deathBuffer = 50;
 

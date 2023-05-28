@@ -1,13 +1,13 @@
-import {Assets} from "../helper/Assets";
-import MarioImage from "../graphics/MarioImage";
+import {Assets} from "../helper/Assets.js";
+import MarioImage from "../graphics/MarioImage.js";
+import MarioWorld from "./MarioWorld.js";
 
-export default class MarioEffect extends Phaser.Sprite.Container{
+export default class MarioEffect{
      x; y; xv; yv; xa; ya;
      life; startingIndex;
      graphics;
 
     constructor(x, y, xv, yv, xa, ya, startIndex, life) {
-        super();
         this.x = x;
         this.y = y;
         this.xv = xv;
@@ -24,7 +24,6 @@ export default class MarioEffect extends Phaser.Sprite.Container{
         this.graphics.originY = 8;
         this.startingIndex = startIndex;
 
-        const sprite = this.scene.add.sprite(0, -8 , 'smallmario')
 
     }
 
