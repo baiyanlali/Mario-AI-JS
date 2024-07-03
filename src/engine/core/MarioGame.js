@@ -54,9 +54,7 @@ export default class MarioGame {
     agent = null;
     /**@type {MarioWorld} */
     world = null;
-    /**
-     * {Phaser.Game}
-     */
+    /**@type {Phaser.Game}*/
     game;
     initialLives;
 
