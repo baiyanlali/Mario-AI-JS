@@ -6,6 +6,7 @@ import * as Phaser from "../../phaser.esm.js";
 import { MarioTimer } from "./MarioTimer.js";
 import MarioAgentEvent from "./MarioAgentEvent.js";
 import HumanAgent from "../../agents/HumanAgent.js";
+import MarioRender from "./MarioRender.js";
 
 export default class MarioGame {
     /**
@@ -49,6 +50,7 @@ export default class MarioGame {
 
     //visualization
     window = null;
+    /**@type {MarioRender} */
     render = null;
     /**@type {MarioAgent} */
     agent = null;
@@ -115,6 +117,7 @@ export default class MarioGame {
      */
     runGame(agent, level, timer, marioState, visuals, fps, scale, resultPath, col) {
         if (visuals) {
+            this.render = new MarioRender()
 
             this.world = new MarioWorld(null, {
                 key: "SceneMain",
@@ -231,6 +234,10 @@ export default class MarioGame {
                 agentEvents.push(new MarioAgentEvent(actions, this.world.mario.x,
                     this.world.mario.y, (this.world.mario.isLarge ? 1 : 0) + (this.world.mario.isFire ? 1 : 0),
                     this.world.mario.onGround, this.world.currentTick));
+            }
+
+            if (visual) {
+                this.render.renderWorld(this.world, null, null, this.render.og);
             }
 
         }

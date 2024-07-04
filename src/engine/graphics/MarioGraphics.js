@@ -1,4 +1,4 @@
-class MarioGraphics {
+export default class MarioGraphics {
     visible;
     alpha;
     originX; originY;
@@ -13,5 +13,11 @@ class MarioGraphics {
         this.width = this.height = 32;
     }
 
+    /**
+     * 
+     * @param {CanvasRenderingContext2D} og 
+     * @param {number} x 
+     * @param {number} y 
+     */
     render(og, x, y){}
 }

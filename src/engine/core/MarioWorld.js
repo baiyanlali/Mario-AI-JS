@@ -14,6 +14,7 @@ import Enemy from "../sprites/Enemy.js";
 import FlowerEnemy from "../sprites/FlowerEnemy.js";
 import LifeMushroom from "../sprites/LifeMushroom.js";
 import BulletBill from "../sprites/BulletBill.js";
+import MarioBackground from "../../engine/graphics/MarioBackground.js";
 
 export default class MarioWorld extends Scene {
     static onlineTimerMax = 100000;
@@ -56,7 +57,7 @@ export default class MarioWorld extends Scene {
     onReady = null;
     onUpdate = null;
     camera;
-    // backgrounds = new MarioBackground[2];
+    backgrounds = [1, 2];
     //    revivable = false;
     //    totalEnemies;
 
@@ -160,6 +161,11 @@ export default class MarioWorld extends Scene {
         const map1 = this.make.tilemap({data: bg2, tileWidth: 16, tileHeight: 16})
         map1.addTilesetImage("tiles", "tiles", 16, 16)
         const background = map1.createLayer(0, "tiles", 0, 0)
+
+
+        this.backgrounds[0] = new MarioBackground(null, null, bg1)
+        this.backgrounds[1] = new MarioBackground(null, null, bg2)
+
 
     }
 
@@ -678,9 +684,13 @@ export default class MarioWorld extends Scene {
         }
     }
 
+    /**
+     * 
+     * @param {CanvasRenderingContext2D} og 
+     */
     render(og) {
-        return
-        for (let i = 0; i < backgrounds.length; i++) {
+        // return
+        for (let i = 0; i < this.backgrounds.length; i++) {
             this.backgrounds[i].render(og, parseInt(this.cameraX), parseInt(this.cameraY));
         }
         for (let sprite of this.sprites) {
