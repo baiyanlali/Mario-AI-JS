@@ -28,7 +28,7 @@ export default class MarioWorld extends Scene {
     cameraY;
     mario;
     level;
-    visuals;
+    visuals = true;
     currentTick;
     //Status
     coins;
@@ -144,7 +144,7 @@ export default class MarioWorld extends Scene {
     }
 
     initializeVisuals(graphicsConfig) {
-        let bg1 = New2DArray(16, 9, 0)
+        let bg1 = New2DArray(16, 9, 42)
 
         let bg2 = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -155,7 +155,7 @@ export default class MarioWorld extends Scene {
             [0, 0, 0, 0, 0, 0, 0, 0, 31, 32, 33, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 34, 35, 36, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ]
 
         const map1 = this.make.tilemap({data: bg2, tileWidth: 16, tileHeight: 16})
@@ -163,8 +163,8 @@ export default class MarioWorld extends Scene {
         const background = map1.createLayer(0, "tiles", 0, 0)
 
 
-        this.backgrounds[0] = new MarioBackground(null, null, bg1)
-        this.backgrounds[1] = new MarioBackground(null, null, bg2)
+        this.backgrounds[0] = new MarioBackground(null, MarioGame.width, bg1)
+        this.backgrounds[1] = new MarioBackground(null, MarioGame.width, bg2)
 
 
     }
@@ -345,7 +345,7 @@ export default class MarioWorld extends Scene {
     }
 
     getSceneObservation(centerX, centerY, detail) {
-        let ret = new New2DArray(MarioGame.tileWidth, MarioGame.tileHeight);
+        let ret = New2DArray(MarioGame.tileWidth, MarioGame.tileHeight);
         let centerXInMap = parseInt(centerX / 16);
         let centerYInMap = parseInt(centerY / 16);
         let obsY = 0
@@ -399,7 +399,7 @@ export default class MarioWorld extends Scene {
     }
 
     getMergedObservation(centerX, centerY, sceneDetail, enemiesDetail) {
-        let ret = new New2DArray(MarioGame.tileWidth, MarioGame.tileHeight);
+        let ret = New2DArray(MarioGame.tileWidth, MarioGame.tileHeight);
         let centerXInMap = parseInt(centerX / 16);
         let centerYInMap = parseInt(centerY / 16);
         let obsY = 0;
@@ -691,22 +691,25 @@ export default class MarioWorld extends Scene {
     render(og) {
         // return
         for (let i = 0; i < this.backgrounds.length; i++) {
-            this.backgrounds[i].render(og, parseInt(this.cameraX), parseInt(this.cameraY));
+            this.backgrounds[i].render(og, Math.floor(this.cameraX), Math.floor(this.cameraY));
         }
+
         for (let sprite of this.sprites) {
             if (sprite.type === SpriteType.MUSHROOM || sprite.type === SpriteType.LIFE_MUSHROOM ||
                 sprite.type === SpriteType.FIRE_FLOWER || sprite.type === SpriteType.ENEMY_FLOWER) {
                 sprite.render(og);
             }
         }
-        this.level.render(og, parseInt(this.cameraX), parseInt(this.cameraY));
+        
+        this.level.render(og, Math.floor(this.cameraX), Math.floor(this.cameraY));
+
         for (let sprite of this.sprites) {
             if (sprite.type !== SpriteType.MUSHROOM && sprite.type !== SpriteType.LIFE_MUSHROOM &&
                 sprite.type !== SpriteType.FIRE_FLOWER && sprite.type !== SpriteType.ENEMY_FLOWER) {
                 sprite.render(og);
             }
         }
-        for (let i = 0; i < this.effects.size(); i++) {
+        for (let i = 0; i < this.effects.length; i++) {
             if (this.effects.get(i).life <= 0) {
                 this.effects.remove(i);
                 i--;

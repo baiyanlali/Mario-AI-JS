@@ -2,7 +2,7 @@ import MarioSprite from "../core/MarioSprite.js";
 import {SpriteType} from "../helper/SpriteType.js";
 import {EventType} from "../helper/EventType.js";
 import {GameObjects} from "../../phaser.esm.js";
-
+import Assets from "../helper/Assets.js";
 export default class LifeMushroom extends MarioSprite {
     onGround = false;
     life;
@@ -23,7 +23,7 @@ export default class LifeMushroom extends MarioSprite {
         this.world.add.existing(this)
 
         if (visuals) {
-            // this.graphics = new MarioImage(Assets.items, 3);
+            this.graphics = new MarioImage(Assets.items, 3);
             this.graphics.width = 16;
             this.graphics.height = 16;
             this.graphics.originX = 8;

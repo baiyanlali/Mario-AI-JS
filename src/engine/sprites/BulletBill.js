@@ -1,7 +1,7 @@
 import MarioSprite from "../core/MarioSprite.js";
 import {GameObjects} from "../../phaser.esm.js";
 import {EventType} from "../helper/EventType.js";
-
+import Assets from "../helper/Assets.js"; 
 export default class BulletBill extends MarioSprite {
     graphics;
 
@@ -18,7 +18,7 @@ export default class BulletBill extends MarioSprite {
         this.world.add.existing(this)
 
         if (visuals) {
-            // this.graphics = new MarioImage(Assets.enemies, 40);
+            this.graphics = new MarioImage(Assets.enemies, 40);
             this.graphics.originX = 8;
             this.graphics.originY = 31;
             this.graphics.width = 16;

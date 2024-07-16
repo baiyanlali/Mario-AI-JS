@@ -115,9 +115,10 @@ export default class MarioGame {
      * @param col
      * @return statistics about the current game
      */
-    runGame(agent, level, timer, marioState, visuals, fps, scale, resultPath, col) {
+    async runGame(agent, level, timer, marioState, visuals, fps, scale, resultPath, col) {
         if (visuals) {
             this.render = new MarioRender()
+            await this.render.init()
 
             this.world = new MarioWorld(null, {
                 key: "SceneMain",
@@ -136,6 +137,7 @@ export default class MarioGame {
                 }
             }
             this.game = new Phaser.Game(config)
+
 
         }
         this.world.level = level;

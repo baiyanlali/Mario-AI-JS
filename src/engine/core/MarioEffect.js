@@ -1,3 +1,6 @@
+
+import Assets from "../helper/Assets.js";
+
 export default class MarioEffect {
      x; y; xv; yv; xa; ya;
      life; startingIndex;

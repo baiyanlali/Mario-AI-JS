@@ -1,4 +1,5 @@
 import MarioWorld from "./MarioWorld.js";
+import Assets from "../helper/Assets.js";
 const TICKS_PER_SECOND = 24;
 
 export default class MarioRender {
@@ -7,6 +8,11 @@ export default class MarioRender {
         this.canvas = document.getElementById("mario_canvas")
         this.og = this.canvas.getContext("2d")
     }
+
+    async init(){
+        await Assets.init()
+    }
+
     /**
      * 
      * @param {MarioWorld} world 

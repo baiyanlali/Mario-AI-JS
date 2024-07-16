@@ -2,12 +2,16 @@ import MarioGame from "./MarioGame.js";
 import {New2DArray} from "../../Util.js";
 import {SpriteType} from "../helper/SpriteType.js";
 import { TileFeature } from "../helper/TileFeature.js";
+import Assets from "../helper/Assets.js";
+import MarioTilemap from "../graphics/MarioTilemap.js";
+import MarioImage from "../graphics/MarioImage.js";
+
 export default class MarioLevel {
 
     width = MarioGame.width;
-    tileWidth = MarioGame.width / 16;
+    tileWidth = Math.floor( MarioGame.width / 16);
     height = MarioGame.height;
-    tileHeight = MarioGame.height / 16;
+    tileHeight = Math.floor(MarioGame.height / 16);
     totalCoins = 0;
     marioTileX;
     marioTileY;
@@ -30,18 +34,22 @@ export default class MarioLevel {
             return;
         }
         let lines = level.split("\n");
-        this.tileHeight = lines[0].length;
-        this.tileWidth = lines.length;
-        this.width = this.tileHeight * 16;
-        this.height = this.tileWidth * 16;
-        // console.log(level)
-        // console.log(lines)
-        this.levelTiles = New2DArray(lines.length, lines[0].length, 0)
-        this.spriteTemplates = New2DArray(lines.length, lines[0].length, SpriteType.NONE)
-        this.lastSpawnTime = New2DArray(lines.length, lines[0].length, -40)
-        this.solidMap = New2DArray(lines.length, lines[0].length, false)
-        for (let x = 0; x < lines.length; x++) {
-            for (let y = 0; y < lines[x].length; y++) {
+        console.log(lines)
+        this.tileWidth = lines[0].length;
+        this.tileHeight = lines.length;
+        this.width = this.tileWidth * 16;
+        this.height = this.tileHeight * 16;
+
+
+        this.levelTiles = New2DArray(lines[0].length, lines.length, 0)
+        this.spriteTemplates = New2DArray(lines[0].length, lines.length, SpriteType.NONE)
+        this.lastSpawnTime = New2DArray(lines[0].length, lines.length, -40)
+        this.solidMap = New2DArray(lines[0].length, lines.length, false)
+
+        this.visuals = visuals
+
+        for (let y = 0; y < lines.length; y++) {
+            for (let x = 0; x < lines[y].length; x++) {
                 this.levelTiles[x][y] = 0;
                 this.spriteTemplates[x][y] = SpriteType.NONE;
                 this.lastSpawnTime[x][y] = -40;
@@ -50,9 +58,9 @@ export default class MarioLevel {
 
         let marioLocInit = false;
         let exitLocInit = false;
-        for (let x = 0; x < lines.length; x++) {
-            for (let y = 0; y < lines[x].length; y++) {
-                let c = lines[x].charAt(y);
+        for (let y = 0; y < lines.length; y++) {
+            for (let x = 0; x < lines[y].length; x++) {
+                let c = lines[y].charAt(x);
                 this.solidMap[x][y] = this.isSolid(c);
                 switch (c) {
                     case 'M':
@@ -119,10 +127,10 @@ export default class MarioLevel {
                         //bullet bill
                     {
                         let tempIndex = 0;
-                        if (y > 0 && lines[x - 1].charAt(y) === '*') {
+                        if (y > 0 && lines[y - 1].charAt(x) === '*') {
                             tempIndex += 1;
                         }
-                        if (y > 1 && lines[x - 2].charAt(y) === '*') {
+                        if (y > 1 && lines[y - 2].charAt(x) === '*') {
                             tempIndex += 1;
                         }
                         this.levelTiles[x][y] = 3 + tempIndex;
@@ -135,7 +143,7 @@ export default class MarioLevel {
                     case 'b': {
                         //bullet bill neck and body
                         let tempIndex = 0;
-                        if (y > 1 && lines[x - 2].charAt(y) === 'B') {
+                        if (y > 1 && lines[y - 2].charAt(x) === 'B') {
                             tempIndex += 1;
                         }
                         this.levelTiles[x][y] = 4 + tempIndex;
@@ -191,14 +199,14 @@ export default class MarioLevel {
                         //empty Pipe
                         let tempIndex = 0;
                         let singlePipe = false;
-                        if (x < lines[x].length - 1 && Character.toLowerCase(lines[x].charAt(y + 1)) !== 't' &&
-                            x > 0 && Character.toLowerCase(lines[x].charAt(y - 1)) !== 't') {
+                        if (x < lines[y].length - 1 && Character.toLowerCase(lines[y].charAt(x + 1)) !== 't' &&
+                            x > 0 && Character.toLowerCase(lines[y].charAt(x - 1)) !== 't') {
                             singlePipe = true;
                         }
                         if (x > 0 && (this.levelTiles[x - 1][y] === 18 || this.levelTiles[x - 1][y] === 20)) {
                             tempIndex += 1;
                         }
-                        if (y > 0 && Character.toLowerCase(lines[x - 1].charAt(y)) === 't') {
+                        if (y > 0 && Character.toLowerCase(lines[y - 1].charAt(x)) === 't') {
                             if (singlePipe) {
                                 tempIndex += 1;
                             } else {
@@ -215,12 +223,12 @@ export default class MarioLevel {
                     case 'T': {
                         //flower pipe
                         let tempIndex = 0;
-                        let singlePipe = x < lines[x].length - 1 && lines[x].charAt(y + 1).toLowerCase() !== 't' &&
-                            x > 0 && lines[x].charAt(y - 1).toLowerCase() !== 't';
+                        let singlePipe = x < lines[y].length - 1 && lines[y].charAt(x + 1).toLowerCase() !== 't' &&
+                            x > 0 && lines[y].charAt(x - 1).toLowerCase() !== 't';
                         if (x > 0 && (this.levelTiles[x - 1][y] === 18 || this.levelTiles[x - 1][y] === 20)) {
                             tempIndex += 1;
                         }
-                        if (y > 0 && lines[x - 1].charAt(y).toLowerCase() === 't') {
+                        if (y > 0 && lines[y - 1].charAt(x).toLowerCase() === 't') {
                             if (singlePipe) {
                                 tempIndex += 1;
                             } else {
@@ -258,19 +266,25 @@ export default class MarioLevel {
         }
         // TODO: Find first floor may crash
         if (!marioLocInit) {
-            this.marioTileY = 0;
-            this.marioTileX = this.findFirstFloor(lines, this.marioTileY);
+            this.marioTileX = 0;
+            this.marioTileY = this.findFirstFloor(lines, this.marioTileX);
         }
         if (!exitLocInit) {
-            this.exitTileY = lines[0].length - 1;
-            this.exitTileX = this.findFirstFloor(lines, this.exitTileY);
+            this.exitTileX = lines[0].length - 1;
+            this.exitTileY = this.findFirstFloor(lines, this.exitTileX);
             // console.log("exit tile x", this.exitTileX)
         }
-        for (let y = this.exitTileX; y > Math.max(1, this.exitTileX - 11); y--) {
-            this.levelTiles[y][this.exitTileY] = 40;
+        for (let y = this.exitTileY; y > Math.max(1, this.exitTileY - 11); y--) {
+            this.levelTiles[this.exitTileX][y] = 40;
         }
-        this.levelTiles[Math.max(1, this.exitTileX - 11)][this.exitTileY] = 39;
-
+        this.levelTiles[this.exitTileX][Math.max(1, this.exitTileY - 11)] = 39;
+    
+        if (this.visuals) {
+            this.graphics = new MarioTilemap(Assets.level, this.levelTiles);
+            this.flag = new MarioImage(Assets.level, 41);
+            this.flag.width = 16
+            this.flag.height = 16
+        }
     }
 
     clone() {
@@ -390,15 +404,12 @@ export default class MarioLevel {
         return -1;
     }
 
-    update(cameraX, cameraY) {
-
-    }
+    update(cameraX, cameraY) {}
 
     render(og, cameraX, cameraY) {
-        return
         this.graphics.render(og, cameraX, cameraY);
-        if (cameraX + MarioGame.width >= this.exitTileY * 16) {
-            this.flag.render(og, this.exitTileY * 16 - 8 - cameraX, Math.max(1, this.exitTileX - 11) * 16 + 16 - cameraY);
+        if (cameraX + MarioGame.width >= this.exitTileX * 16) {
+            this.flag.render(og, this.exitTileX * 16 - 8 - cameraX, Math.max(1, this.exitTileY - 11) * 16 + 16 - cameraY);
         }
     }
 
