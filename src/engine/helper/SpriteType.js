@@ -27,6 +27,6 @@ export function spawnSprite(sprite, visuals, xTile, yTile, dir, scene) {
     if (sprite === SpriteType.ENEMY_FLOWER) {
         return new FlowerEnemy(visuals, xTile * 16 + 17, yTile * 16 + 18, dir, scene);
     }
-    return new Enemy(visuals, yTile * 16 + 8, xTile * 16 + 15, dir, scene, sprite);
+    return new Enemy(visuals, xTile * 16 + 8, yTile * 16 + 15, dir, scene, sprite);
 }
 

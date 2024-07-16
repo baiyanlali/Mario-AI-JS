@@ -199,14 +199,14 @@ export default class MarioLevel {
                         //empty Pipe
                         let tempIndex = 0;
                         let singlePipe = false;
-                        if (x < lines[y].length - 1 && Character.toLowerCase(lines[y].charAt(x + 1)) !== 't' &&
-                            x > 0 && Character.toLowerCase(lines[y].charAt(x - 1)) !== 't') {
+                        if (x < lines[y].length - 1 && lines[y].charAt(x + 1).toLowerCase() !== 't' &&
+                            x > 0 && lines[y].charAt(x - 1).toLowerCase() !== 't') {
                             singlePipe = true;
                         }
                         if (x > 0 && (this.levelTiles[x - 1][y] === 18 || this.levelTiles[x - 1][y] === 20)) {
                             tempIndex += 1;
                         }
-                        if (y > 0 && Character.toLowerCase(lines[y - 1].charAt(x)) === 't') {
+                        if (y > 0 && lines[y - 1].charAt(x).toLowerCase() === 't') {
                             if (singlePipe) {
                                 tempIndex += 1;
                             } else {

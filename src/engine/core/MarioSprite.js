@@ -1,6 +1,4 @@
-import * as Phaser from "../../phaser.esm.js";
-
-export default class MarioSprite extends Phaser.GameObjects.Container{
+export default class MarioSprite{
     type
     initialCode
     x; y; xa; ya;
@@ -8,28 +6,28 @@ export default class MarioSprite extends Phaser.GameObjects.Container{
     alive
     world
 
-    constructor(x, y, scene){
-        super(scene, x, y);
+    constructor(x, y, type){
         this.x = x
         this.y = y
         this.xa = 0
         this.ya = 0
         this.facing = 1
         this.alive = true
-        this.world = scene
+        this.world = null
         this.width = 16
         this.height = 16
         this.initialCode = ""
+        this.type = type
     }
 
     clone(){
-        return null;
+        return new MarioSprite();
     }
 
     added(){}
     removed(){}
-    getMapX(){return parseInt(this.x / 16)}
-    getMapY(){return parseInt(this.y / 16)}
+    getMapX(){return Math.floor(this.x / 16)}
+    getMapY(){return Math.floor(this.y / 16)}
 
     render(og){}
     update(){}

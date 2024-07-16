@@ -1,5 +1,6 @@
 
 import Assets from "../helper/Assets.js";
+import MarioImage from "../graphics/MarioImage.js";
 
 export default class MarioEffect {
      x; y; xv; yv; xa; ya;
@@ -33,6 +34,6 @@ export default class MarioEffect {
         this.xv += this.xa;
         this.yv += this.ya;
 
-        this.graphics.render(og, parseInt (this.x - cameraX), parseInt (this.y - cameraY));
+        this.graphics.render(og, Math.floor (this.x - cameraX), Math.floor (this.y - cameraY));
     }
 }

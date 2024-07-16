@@ -15,6 +15,11 @@ import FlowerEnemy from "../sprites/FlowerEnemy.js";
 import LifeMushroom from "../sprites/LifeMushroom.js";
 import BulletBill from "../sprites/BulletBill.js";
 import MarioBackground from "../../engine/graphics/MarioBackground.js";
+import CoinEffect from "../effects/CoinEffect.js";
+import Mushroom from "../sprites/Mushroom.js";
+import { BrickEffect } from "../effects/BrickEffect.js";
+import FireFlower from "../sprites/FireFlower.js";
+import FireballEffect from "../effects/FireballEffect.js";
 
 export default class MarioWorld extends Scene {
     static onlineTimerMax = 100000;
@@ -53,9 +58,8 @@ export default class MarioWorld extends Scene {
     removedSprites;
 
     effects;
-    level;
     onReady = null;
-    onUpdate = null;
+    onUpdate = ()=> {};
     camera;
     backgrounds = [1, 2];
     //    revivable = false;
@@ -181,7 +185,7 @@ export default class MarioWorld extends Scene {
         const currground = leveltile.createLayer(0, "tiles", 0, 0)
 
         // 这里x和y反过来了
-        this.mario = new Mario(this.visuals, this.level.marioTileY * 16, this.level.marioTileX * 16, this, "mplayer");
+        this.mario = new Mario(this.visuals, this.level.marioTileX * 16, this.level.marioTileY * 16, this, "mplayer");
         this.mario.alive = true;
         this.mario.world = this;
         this.sprites.push(this.mario);
@@ -195,7 +199,7 @@ export default class MarioWorld extends Scene {
 
     getEnemiesRemain() {
         let n = 0;
-        for (let x = parseInt((mario.x / 16) + MarioGame.width / 2); x < this.level.tileWidth; x++) {
+        for (let x = Math.floor((this.mario.x / 16) + MarioGame.width / 2); x < this.level.tileWidth; x++) {
             n += this.level.enemyNumList.get(x);
         }
         return n;
@@ -203,7 +207,7 @@ export default class MarioWorld extends Scene {
 
     getEnemies() {
         let enemies = [];
-        for (let sprite in sprites) {
+        for (let sprite in this.sprites) {
             if (this.isEnemy(sprite)) {
                 enemies.push(sprite);
             }
@@ -313,8 +317,8 @@ export default class MarioWorld extends Scene {
 
     revive() {
         // console.log("revive! from", this.mario.x , this.mario.y)
-        let newTileX = parseInt(this.mario.x / 16);
-        let newTileY = parseInt( this.mario.y / 16);
+        let newTileX = Math.floor(this.mario.x / 16);
+        let newTileY = Math.floor( this.mario.y / 16);
         let direction = 1;
         let nobreak = true
         while (nobreak) {
@@ -346,20 +350,20 @@ export default class MarioWorld extends Scene {
 
     getSceneObservation(centerX, centerY, detail) {
         let ret = New2DArray(MarioGame.tileWidth, MarioGame.tileHeight);
-        let centerXInMap = parseInt(centerX / 16);
-        let centerYInMap = parseInt(centerY / 16);
+        let centerXInMap = Math.floor(centerX / 16);
+        let centerYInMap = Math.floor(centerY / 16);
         let obsY = 0
         let obsX = 0
-        for (y = centerYInMap - MarioGame.tileHeight / 2; y < centerYInMap + MarioGame.tileHeight / 2; y++, obsY++) {
-            for (x = centerXInMap - MarioGame.tileWidth / 2; x < centerXInMap + MarioGame.tileWidth / 2; x++, obsX++) {
-                let currentX = x;
+        for (this.y = centerYInMap - MarioGame.tileHeight / 2; this.y < centerYInMap + MarioGame.tileHeight / 2; this.y++, obsY++) {
+            for (this.x = centerXInMap - MarioGame.tileWidth / 2; this.x < centerXInMap + MarioGame.tileWidth / 2; this.x++, obsX++) {
+                let currentX = this.x;
                 if (currentX < 0) {
                     currentX = 0;
                 }
                 if (currentX > this.level.tileWidth - 1) {
                     currentX = this.level.tileWidth - 1;
                 }
-                let currentY = y;
+                let currentY = this.y;
                 if (currentY < 0) {
                     currentY = 0;
                 }
@@ -374,8 +378,8 @@ export default class MarioWorld extends Scene {
 
     getEnemiesObservation(centerX, centerY, detail) {
         let ret = New2DArray(MarioGame.tileWidth, MarioGame.tileHeight);
-        let centerXInMap = parseInt(centerX / 16);
-        let centerYInMap = parseInt(centerY / 16);
+        let centerXInMap = Math.floor(centerX / 16);
+        let centerYInMap = Math.floor(centerY / 16);
 
         for (let w = 0; w < ret.length; w++)
             for (let h = 0; h < ret[0].length; h++)
@@ -400,27 +404,27 @@ export default class MarioWorld extends Scene {
 
     getMergedObservation(centerX, centerY, sceneDetail, enemiesDetail) {
         let ret = New2DArray(MarioGame.tileWidth, MarioGame.tileHeight);
-        let centerXInMap = parseInt(centerX / 16);
-        let centerYInMap = parseInt(centerY / 16);
+        let centerXInMap = Math.floor(centerX / 16);
+        let centerYInMap = Math.floor(centerY / 16);
         let obsY = 0;
         let obsX = 0;
-        for (y = centerYInMap - MarioGame.tileHeight / 2; y < centerYInMap + MarioGame.tileHeight / 2; y++, obsY++) {
-            for (x = centerXInMap - MarioGame.tileWidth / 2; x < centerXInMap + MarioGame.tileWidth / 2; x++, obsX++) {
-                let currentX = x;
+        for (this.y = centerYInMap - MarioGame.tileHeight / 2; this.y < centerYInMap + MarioGame.tileHeight / 2; this.y++, obsY++) {
+            for (this.x = centerXInMap - MarioGame.tileWidth / 2; this.x < centerXInMap + MarioGame.tileWidth / 2; this.x++, obsX++) {
+                let currentX = this.x;
                 if (currentX < 0) {
                     currentX = 0;
                 }
                 if (currentX > this.level.tileWidth - 1) {
                     currentX = this.level.tileWidth - 1;
                 }
-                let currentY = y;
+                let currentY = this.y;
                 if (currentY < 0) {
                     currentY = 0;
                 }
                 if (currentY > this.level.tileHeight - 1) {
                     currentY = this.level.tileHeight - 1;
                 }
-                ret[obsX][obsY] = MarioForwardModel.getBlockValueGeneralization(this.level.getBlock(x, y), sceneDetail);
+                ret[obsX][obsY] = MarioForwardModel.getBlockValueGeneralization(this.level.getBlock(this.x, this.y), sceneDetail);
             }
         }
 
@@ -489,8 +493,8 @@ export default class MarioWorld extends Scene {
         if (this.cameraY < 0) {
             this.cameraY = 0;
         }
-        this.cameras.main.scrollX = this.cameraX
-        this.cameras.main.scrollY = this.cameraY
+        // this.cameras.main.scrollX = this.cameraX
+        // this.cameras.main.scrollY = this.cameraY
 
 
         this.lastFrameEvents = [];
@@ -598,10 +602,11 @@ export default class MarioWorld extends Scene {
         }
         this.fireballsToCheck = [];
 
-        this.sprites.join(this.addedSprites);
-        this.sprites = [...this.sprites, ...this.addedSprites]
-        this.sprites.filter((s) => {
-            this.removedSprites.includes(s)
+        // this.sprites.join(this.addedSprites);
+        this.sprites = this.sprites.concat(this.addedSprites)
+        // this.sprites = [...this.sprites, ...this.addedSprites]
+        this.sprites = this.sprites.filter((s) => {
+            return !this.removedSprites.includes(s)
         })
         // this.sprites.removeAll(removedSprites);
         this.addedSprites = []
@@ -636,9 +641,9 @@ export default class MarioWorld extends Scene {
 
             if (features.includes(TileFeature.SPECIAL)) {
                 if (!this.mario.isLarge) {
-                    this.addSprite(new Mushroom(this.visuals, xTile * 16 + 9, yTile * 16 + 8, this));
+                    this.addSprite(new Mushroom(this.visuals, xTile * 16 + 9, yTile * 16 + 8));
                 } else {
-                    this.addSprite(new FireFlower(this.visuals, xTile * 16 + 9, yTile * 16 + 8, this));
+                    this.addSprite(new FireFlower(this.visuals, xTile * 16 + 9, yTile * 16 + 8));
                 }
             } else if (features.includes(TileFeature.LIFE)) {
                 this.addSprite(new LifeMushroom(this.visuals, xTile * 16 + 9, yTile * 16 + 8, this));
@@ -710,14 +715,17 @@ export default class MarioWorld extends Scene {
                 sprite.render(og);
             }
         }
-        for (let i = 0; i < this.effects.length; i++) {
-            if (this.effects.get(i).life <= 0) {
-                this.effects.remove(i);
-                i--;
-                continue;
-            }
-            this.effects.get(i).render(og, this.cameraX, this.cameraY);
-        }
+
+        this.effects = this.effects.filter((e)=> e.life > 0)
+        this.effects.forEach((e)=> e.render(og, this.cameraX, this.cameraY))
+        // for (let i = 0; i < this.effects.length; i++) {
+        //     if (this.effects[i].life <= 0) {
+        //         this.effects.remove(i);
+        //         i--;
+        //         continue;
+        //     }
+        //     this.effects[i].render(og, this.cameraX, this.cameraY);
+        // }
     }
 
     setCurrentTimer(currentTimer) {

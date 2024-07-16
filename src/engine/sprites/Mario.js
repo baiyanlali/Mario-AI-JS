@@ -48,30 +48,9 @@ export default class Mario extends MarioSprite{
         this.isFire = this.oldFire = false;
         this.width = 4;
         this.height = 24;
-        this.world = scene;
-        this.scene = scene;
         this.type = SpriteType.MARIO;
         this.x = x + 8;
         this.y = y + 15;
-
-        this.scene.anims.create({
-            key: "walk",
-            frames: this.scene.anims.generateFrameNumbers('mario',  { start: 0, end: 10, first: 0 }),
-            frameRate: 16,
-            repeat: -1
-        })
-
-        this.scene.anims.create({
-            key: "mwalk",
-            frames: this.scene.anims.generateFrameNumbers('smallmario',  { start: 0, end: 10, first: 0 }),
-            frameRate: 16,
-            repeat: -1
-        })
-
-        // const sprite = this.scene.add.sprite(-8, -8 , 'smallmario').play('mwalk')
-        const sprite = this.scene.add.sprite(0, -8 , 'smallmario').play('mwalk')
-        this.add(sprite)
-        this.scene.add.existing(this)
 
         if (visuals){
             this.graphics = new MarioImage(Assets.smallMario, 0)

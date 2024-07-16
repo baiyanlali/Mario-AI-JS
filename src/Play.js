@@ -13,7 +13,7 @@ async function getAgent(repPath){
 
 let game = new MarioGame()
 game.setLives(5)
-let levelPath = "../levels/lvl155.lvl";			// For local
+let levelPath = "../levels/original/lvl-1.txt";			// For local
 let repPath = "../reps/b179cbd3-ee8e-48de-baf8-da6438461d1d_lvl155.rep";
 let level = await getLevel(levelPath)
 

@@ -1,8 +1,11 @@
 import MarioSprite from "../core/MarioSprite.js";
 import { SpriteType } from "../helper/SpriteType.js";
 import {EventType} from "../helper/EventType.js";
-import { GameObjects } from "../../phaser.esm.js";
-
+import MarioImage from "../graphics/MarioImage.js";
+import Assets from "../helper/Assets.js";
+import SquishEffect from "../effects/SquishEffect.js";
+import DeathEffect from "../effects/DeathEffect.js";
+import Shell from "./Shell.js";
 export default class Enemy extends MarioSprite {
     static GROUND_INERTIA = 0.89;
     static AIR_INERTIA = 0.89;
@@ -12,10 +15,10 @@ export default class Enemy extends MarioSprite {
     winged = true;
     noFireballDeath;
 
-    runTime;
+    runTime = 0;
     wingTime = 0;
-    wingGraphics = {}
-    graphics = {}
+    wingGraphics
+    graphics
 
     constructor(visuals, x, y, dir, scene, type) {
         super(x, y, scene);
@@ -35,14 +38,19 @@ export default class Enemy extends MarioSprite {
             this.facing = 1;
         }
 
-        // const sprite = this.world.add.sprite(-8, -16, 'enemy').play('enemy-walk')
-        const sprite = new GameObjects.Sprite(this.world, -8, -16, 'enemy', this.type[1])
-        this.add(sprite)
+        if (visuals) {
+            console.log('enemy type', this.type)
+            this.graphics = new MarioImage(Assets.enemies, this.type[1]);
+            this.graphics.originX = 8;
+            this.graphics.originY = 31;
+            this.graphics.width = 16;
 
-        const wing = new GameObjects.Sprite(this.world, -16, -16, 'enemy', 32)
-        this.add(wing)
+            this.wingGraphics = new MarioImage(Assets.enemies, 32);
+            this.wingGraphics.originX = 16;
+            this.wingGraphics.originY = 31;
+            this.wingGraphics.width = 16;
+        }
 
-        this.world.add.existing(this)
 
     }
 
@@ -103,7 +111,8 @@ export default class Enemy extends MarioSprite {
         this.graphics.flipX = this.facing === -1;
         this.runTime += (Math.abs(this.xa)) + 5;
 
-        let runFrame = (parseInt(this.runTime / 20)) % 2;
+        let runFrame = (Math.floor(this.runTime / 20)) % 2;
+
 
         if (!this.onGround) {
             runFrame = 1;
@@ -115,7 +124,6 @@ export default class Enemy extends MarioSprite {
     }
 
     update() {
-        // console.log("enemy"++" update: x: "+this.x + " y: ", this.y)
         if (!this.alive) {
             return;
         }
@@ -208,7 +216,7 @@ export default class Enemy extends MarioSprite {
                 collide = true;
 
             if (this.avoidCliffs && this.onGround
-                && !this.world.level.isBlocking(parseInt((this.x + xa + this.width) / 16), parseInt((this.y) / 16 + 1), xa, 1))
+                && !this.world.level.isBlocking(Math.floor((this.x + xa + this.width) / 16), Math.floor((this.y) / 16 + 1), xa, 1))
                 collide = true;
         }
         if (xa < 0) {
@@ -220,25 +228,25 @@ export default class Enemy extends MarioSprite {
                 collide = true;
 
             if (this.avoidCliffs && this.onGround
-                && !this.world.level.isBlocking(parseInt((this.x + xa - this.width) / 16), parseInt((this.y) / 16 + 1), xa, 1))
+                && !this.world.level.isBlocking(Math.floor((this.x + xa - this.width) / 16), Math.floor((this.y) / 16 + 1), xa, 1))
                 collide = true;
         }
 
         if (collide) {
             if (xa < 0) {
-                this.x = parseInt((this.x - this.width) / 16) * 16 + this.width;
+                this.x = Math.floor((this.x - this.width) / 16) * 16 + this.width;
                 this.xa = 0;
             }
             if (xa > 0) {
-                this.x = parseInt((this.x + this.width) / 16 + 1) * 16 - this.width - 1;
+                this.x = Math.floor((this.x + this.width) / 16 + 1) * 16 - this.width - 1;
                 this.xa = 0;
             }
             if (ya < 0) {
-                this.y = parseInt((this.y - this.height) / 16) * 16 + this.height;
+                this.y = Math.floor((this.y - this.height) / 16) * 16 + this.height;
                 this.ya = 0;
             }
             if (ya > 0) {
-                this.y = parseInt(this.y / 16 + 1) * 16 - 1;
+                this.y = Math.floor(this.y / 16 + 1) * 16 - 1;
                 this.onGround = true;
             }
             return false;
@@ -250,9 +258,9 @@ export default class Enemy extends MarioSprite {
     }
 
     isBlocking(_x, _y, xa, ya) {
-        let x = parseInt(_x / 16);
-        let y = parseInt(_y / 16);
-        if (x === parseInt(this.x / 16) && y === parseInt(this.y / 16))
+        let x = Math.floor(_x / 16);
+        let y = Math.floor(_y / 16);
+        if (x === Math.floor(this.x / 16) && y === Math.floor(this.y / 16))
             return false;
 
         let blocking = this.world.level.isBlocking(x, y, xa, ya);
@@ -265,8 +273,8 @@ export default class Enemy extends MarioSprite {
             return false;
         }
 
-        let xD = shell.x - x;
-        let yD = shell.y - y;
+        let xD = shell.x - this.x;
+        let yD = shell.y - this.y;
 
         if (xD > -16 && xD < 16) {
             if (yD > -this.height && yD < shell.height) {
@@ -296,12 +304,12 @@ export default class Enemy extends MarioSprite {
             return false;
         }
 
-        let xD = fireball.x - x;
-        let yD = fireball.y - y;
+        let xD = fireball.x - this.x;
+        let yD = fireball.y - this.y;
 
         if (xD > -16 && xD < 16) {
             if (yD > -this.height && yD < fireball.height) {
-                if (noFireballDeath)
+                if (this.noFireballDeath)
                     return true;
 
                 this.xa = fireball.facing * 2;
@@ -328,7 +336,7 @@ export default class Enemy extends MarioSprite {
             return;
         }
 
-        if (this.x + this.width > xTile * 16 && this.x - this.width < xTile * 16 + 16 && yTile === parseInt((y - 1) / 16)) {
+        if (this.x + this.width > xTile * 16 && this.x - this.width < xTile * 16 + 16 && yTile === Math.floor((this.y - 1) / 16)) {
             this.xa = -this.world.mario.facing * 2;
             this.ya = -5;
             if (this.graphics !== null) {
@@ -347,18 +355,18 @@ export default class Enemy extends MarioSprite {
     }
 
     render(og) {
-        return
         if (this.winged) {
             if (this.type !== SpriteType.RED_KOOPA && this.type !== SpriteType.GREEN_KOOPA && this.type !== SpriteType.RED_KOOPA_WINGED
                 && this.type !== SpriteType.GREEN_KOOPA_WINGED) {
                 this.wingGraphics.flipX = false;
-                this.wingGraphics.render(og, parseInt(this.x - this.world.cameraX - 6), parseInt(this.y - this.world.cameraY - 6));
+                this.wingGraphics.render(og, Math.floor(this.x - this.world.cameraX - 6), Math.floor(this.y - this.world.cameraY - 6));
                 this.wingGraphics.flipX = true;
-                this.wingGraphics.render(og, parseInt(this.x - this.world.cameraX + 22), parseInt(this.y - this.world.cameraY - 6));
+                this.wingGraphics.render(og, Math.floor(this.x - this.world.cameraX + 22), Math.floor(this.y - this.world.cameraY - 6));
             }
         }
 
-        this.graphics.render(og, parseInt(this.x - this.world.cameraX), parseInt(this.y - this.world.cameraY));
+
+        this.graphics.render(og, Math.floor(this.x - this.world.cameraX), Math.floor(this.y - this.world.cameraY));
 
         if (this.winged) {
             if (this.type === SpriteType.RED_KOOPA || this.type === SpriteType.GREEN_KOOPA || this.type === SpriteType.RED_KOOPA_WINGED
@@ -368,7 +376,7 @@ export default class Enemy extends MarioSprite {
                     shiftX = 17;
                 }
                 this.wingGraphics.flipX = this.graphics.flipX;
-                this.wingGraphics.render(og, parseInt(this.x - this.world.cameraX + shiftX), parseInt(this.y - this.world.cameraY - 8));
+                this.wingGraphics.render(og, Math.floor(this.x - this.world.cameraX + shiftX), Math.floor(this.y - this.world.cameraY - 8));
             }
         }
     }
