@@ -455,6 +455,7 @@ export default class MarioWorld extends Scene {
         if (this.gameStatus !== GameStatus.RUNNING) {
             return;
         }
+
         if (this.pauseTimer > 0) {
             this.pauseTimer -= 1;
             if (this.visuals) {
@@ -472,7 +473,7 @@ export default class MarioWorld extends Scene {
             }
         }
         this.currentTick += 1;
-        this.cameraX = this.mario.x - MarioGame.width / 2;
+        this.cameraX = this.mario.x - Math.floor( MarioGame.width / 2);
 
         // console.log(this.level.width)
         if (this.cameraX + MarioGame.width > this.level.width) {
@@ -517,10 +518,10 @@ export default class MarioWorld extends Scene {
                 this.fireballsOnScreen += 1;
             }
         }
-        this.level.update(parseInt(this.cameraX), parseInt(this.cameraY));
+        this.level.update(Math.floor(this.cameraX), Math.floor(this.cameraY));
 
-        for (let x = parseInt(this.cameraX / 16 - 1); x <= parseInt((this.cameraX + MarioGame.width) / 16 + 1); x++) {
-            for (let y = parseInt(this.cameraY / 16 - 1); y <= parseInt((this.cameraY + MarioGame.height) / 16 + 1); y++) {
+        for (let x = Math.floor(this.cameraX / 16 - 1); x <= Math.floor((this.cameraX + MarioGame.width) / 16 + 1); x++) {
+            for (let y = Math.floor(this.cameraY / 16 - 1); y <= Math.floor((this.cameraY + MarioGame.height) / 16 + 1); y++) {
                 let dir = 0;
                 if (x * 16 + 8 > this.mario.x + 16)
                     dir = -1;

@@ -4,6 +4,8 @@ import { EventType } from "../helper/EventType.js";
 import {TileFeature} from "../helper/TileFeature.js"
 import MarioGame from "../core/MarioGame.js";
 import {SpriteType} from "../helper/SpriteType.js";
+import MarioImage from "../graphics/MarioImage.js";
+import Assets from "../helper/Assets.js";
 
 export default class Mario extends MarioSprite{
 
@@ -70,6 +72,10 @@ export default class Mario extends MarioSprite{
         const sprite = this.scene.add.sprite(0, -8 , 'smallmario').play('mwalk')
         this.add(sprite)
         this.scene.add.existing(this)
+
+        if (visuals){
+            this.graphics = new MarioImage(Assets.smallMario, 0)
+        }
             
     }
 
@@ -155,7 +161,91 @@ export default class Mario extends MarioSprite{
             return true;
         }
     }
-    updateGraphics() {}
+
+    updateGraphics() {
+
+
+        if(!this.alive)
+            return
+
+
+        let currentLarge;
+        let currentFire;
+        if (this.world.pauseTimer > 0) {
+            currentLarge = Math.floor(this.world.pauseTimer / 2) % 2 == 0 ? this.oldLarge : this.isLarge;
+            currentFire = Math.floor(this.world.pauseTimer / 2) % 2 == 0 ? this.oldFire : this.isFire;
+        } else {
+            currentLarge = this.isLarge;
+            currentFire = this.isFire;
+        }
+
+        if (currentLarge) {
+            this.graphics.sheet = Assets.mario;
+            if (currentFire) {
+                this.graphics.sheet = Assets.fireMario;
+            }
+
+            this.graphics.originX = 16;
+            this.graphics.originY = 31;
+            this.graphics.width = this.graphics.height = 32;
+        } else {
+            this.graphics.sheet = Assets.smallMario;
+            this.graphics.originX = 8;
+            this.graphics.originY = 15;
+            this.graphics.width = this.graphics.height = 16;
+        }
+
+        let xa = this.xa
+
+        this.marioFrameSpeed += Math.abs(xa) + 5;
+
+        if (Math.abs(xa) < 0.5){
+            this.marioFrameSpeed = 0;
+        }
+
+
+        this.graphics.visible = ((this.invulnerableTime / 2) & 1) == 0;
+        this.graphics.flipX = this.facing === -1;
+
+
+        let frameIndex = 0;
+        if (this.currentLarge) {
+            frameIndex = (Math.floor(this.marioFrameSpeed / 20)) % 4;
+            if (frameIndex == 3)
+                frameIndex = 1;
+            if (Math.abs(xa) > 10)
+                frameIndex += 3;
+            if (!this.onGround) {
+                if (Math.abs(xa) > 10)
+                    frameIndex = 6;
+                else
+                    frameIndex = 5;
+            }
+        } else {
+            frameIndex = (Math.floor(this.marioFrameSpeed / 20)) % 2;
+            if (Math.abs(xa) > 10)
+                frameIndex += 2;
+            if (!this.onGround) {
+                if (Math.abs(xa) > 10)
+                    frameIndex = 5;
+                else
+                    frameIndex = 4;
+            }
+        }
+
+        if (this.onGround && ((this.facing == -1 && xa > 0) || (this.facing == 1 && xa < 0))) {
+            if (xa > 1 || xa < -1)
+                frameIndex = currentLarge ? 8 : 7;
+        }
+
+        if (this.currentLarge && this.isDucking) {
+            frameIndex = 13;
+        }
+
+        this.graphics.index = frameIndex;
+
+    }
+
     update(){
         // console.log("mario update: x: "+this.x + " y: ", this.y)
         // this.setPosition(0, 0)
@@ -252,8 +342,8 @@ export default class Mario extends MarioSprite{
             this.xa = 0;
         }
 
-        if (this.x > this.world.level.exitTileY * 16) {
-            this.x = this.world.level.exitTileY * 16;
+        if (this.x > this.world.level.exitTileX * 16) {
+            this.x = this.world.level.exitTileX * 16;
             this.xa = 0;
             this.world.win();
         }
@@ -271,12 +361,16 @@ export default class Mario extends MarioSprite{
 
         this.scaleX = this.facing;
 
+        if (this.graphics != null){
+            this.updateGraphics();
+        }
+
     }
 
     isBlocking(_x,  _y,  xa,  ya) {
-        let xTile = parseInt (_x / 16);
-        let yTile = parseInt (_y / 16);
-        if (xTile === parseInt (this.x / 16) && yTile === parseInt (this.y / 16))
+        let xTile = Math.floor (_x / 16);
+        let yTile = Math.floor (_y / 16);
+        if (xTile === Math.floor (this.x / 16) && yTile === Math.floor (this.y / 16))
             return false;
 
         let blocking = this.world.level.isBlocking(xTile, yTile, xa, ya);
@@ -451,6 +545,13 @@ export default class Mario extends MarioSprite{
         sprite.jumpTime = this.jumpTime;
         sprite.xJumpStart = this.xJumpStart;
         return sprite;
+    }
+
+
+    render(og) {
+        super.render(og);
+
+        this.graphics.render(og, Math.floor(this.x - this.world.cameraX), Math.floor(this.y - this.world.cameraY));
     }
 
 }

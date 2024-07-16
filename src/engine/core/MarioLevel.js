@@ -110,10 +110,10 @@ export default class MarioLevel {
                         //jump through block
                     {
                         let tempIndex = 0;
-                        if (x > 0 && lines[x].charAt(y - 1) === '%') {
+                        if (x > 0 && lines[y].charAt(x - 1) === '%') {
                             tempIndex += 2;
                         }
-                        if (x < this.levelTiles.length - 1 && lines[x].charAt(y + 1) === '%') {
+                        if (x < this.levelTiles.length - 1 && lines[y].charAt(x + 1) === '%') {
                             tempIndex += 1;
                         }
                         this.levelTiles[x][y] = 43 + tempIndex;
@@ -325,7 +325,6 @@ export default class MarioLevel {
     }
 
     getBlock(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0) {
             xTile = 0;
         }
@@ -339,7 +338,6 @@ export default class MarioLevel {
     }
 
     setBlock(xTile, yTile, index) {
-        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -347,7 +345,6 @@ export default class MarioLevel {
     }
 
     setShiftIndex(xTile, yTile, shift) {
-        [xTile, yTile] = [yTile, xTile]
         if (this.graphics == null || xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -355,7 +352,6 @@ export default class MarioLevel {
     }
 
     getSpriteType(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile >= this.tileWidth || yTile >= this.tileHeight) {
             return SpriteType.NONE;
         }
@@ -363,7 +359,6 @@ export default class MarioLevel {
     }
 
     getLastSpawnTick(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return 0;
         }
@@ -371,7 +366,6 @@ export default class MarioLevel {
     }
 
     setLastSpawnTick(xTile, yTile, tick) {
-        [xTile, yTile] = [yTile, xTile]
         if (xTile < 0 || yTile < 0 || xTile > this.tileWidth - 1 || yTile > this.tileHeight - 1) {
             return;
         }
@@ -379,7 +373,6 @@ export default class MarioLevel {
     }
 
     getSpriteCode(xTile, yTile) {
-        [xTile, yTile] = [yTile, xTile]
         return xTile + "_" + yTile + "_" + this.getSpriteType(xTile, yTile)[0]??this.getSpriteType(xTile, yTile);
     }
 
@@ -389,10 +382,10 @@ export default class MarioLevel {
             c === 'S' || c === 'U' || c === 'D' || c === '%' || c === 't' || c === 'T';
     }
 
-    findFirstFloor(lines, y) {
+    findFirstFloor(lines, x) {
         let skipLines = true;
         for (let i = lines.length - 1; i >= 0; i--) {
-            let c = lines[i].charAt(y);
+            let c = lines[i].charAt(x);
             if (this.isSolid(c)) {
                 skipLines = false;
                 continue;

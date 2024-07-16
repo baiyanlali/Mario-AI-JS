@@ -1,4 +1,5 @@
 
+import Assets from "../helper/Assets.js";
 import MarioGraphics from "./MarioGraphics.js";
 
 export default class MarioImage extends MarioGraphics {
@@ -13,17 +14,28 @@ export default class MarioImage extends MarioGraphics {
 
     render(og, x, y) {
         // console.log(this.visible)
-        if (!this.visible) return;
+        if (!this.visible) {
+            return;
+        }
 
-        let xPixel = x - super.originX;
-        let yPixel = y - super.originY;
+        let xPixel = x - this.originX;
+        let yPixel = y - this.originY;
         let image = this.sheet[this.index % this.sheet.length][Math.floor(this.index / this.sheet.length)];
 
+        // if(this.sheet == Assets.smallMario){
+        //     console.log(xPixel + (this.flipX ? this.width : 0), 
+        //     yPixel + (this.flipY ? this.height : 0), 
+        //     this.flipX ? -this.width : this.width, 
+        //     this.flipY ? -this.height : this.height,
+        //     this.flipX, this.flipY)
+        // }
+        
+
         og.drawImage(image, 
-            xPixel + (super.flipX ? this.width : 0), 
-            yPixel + (super.flipY ? this.height : 0), 
-            super.flipX ? -this.width : this.width, 
-            super.flipY ? -this.height : this.height);
+            xPixel + (this.flipX ? this.width : 0), 
+            yPixel + (this.flipY ? this.height : 0), 
+            this.flipX ? -this.width : this.width, 
+            this.flipY ? -this.height : this.height);
     }
 
 }
