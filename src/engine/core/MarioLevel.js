@@ -13,10 +13,10 @@ export default class MarioLevel {
     height = MarioGame.height;
     tileHeight = Math.floor(MarioGame.height / 16);
     totalCoins = 0;
-    marioTileX;
-    marioTileY;
-    exitTileX;
-    exitTileY;
+    marioTileX = 0;
+    marioTileY = 0;
+    exitTileX = 0;
+    exitTileY = 0;
 
     levelTiles;
     spriteTemplates;
@@ -318,8 +318,8 @@ export default class MarioLevel {
         let block = this.getBlock(xTile, yTile);
         let features = TileFeature.getTileType(block);
         let blocking = features.includes(TileFeature.BLOCK_ALL);
-        blocking |= (ya < 0) && features.includes(TileFeature.BLOCK_UPPER);
-        blocking |= (ya > 0) && features.includes(TileFeature.BLOCK_LOWER);
+        blocking ||= (ya < 0) && features.includes(TileFeature.BLOCK_UPPER);
+        blocking ||= (ya > 0) && features.includes(TileFeature.BLOCK_LOWER);
 
         return blocking;
     }
@@ -406,11 +406,12 @@ export default class MarioLevel {
         }
     }
 
-    standable(yTile, xTile) {
+    standable(xTile, yTile) {
 
-        if (xTile >= this.tileHeight)
+        if (yTile >= this.tileHeight)
             return false;
-        else
-            return !this.solidMap[xTile][yTile] && this.solidMap[xTile+1][yTile];
+        // console.log(this.solidMap)
+        // return true
+        return !this.solidMap[xTile][yTile] && this.solidMap[xTile][yTile + 1];
     }
 }

@@ -3,7 +3,8 @@ import {SpriteType} from "../helper/SpriteType.js";
 
 export default class FlowerEnemy extends Enemy {
     yStart;
-    tick; waitTime;
+    tick = 0; 
+    waitTime;
 
     constructor( visuals,  x,  y, dir, scene) {
         super(visuals, x, y, 0, scene, SpriteType.ENEMY_FLOWER);
@@ -17,10 +18,10 @@ export default class FlowerEnemy extends Enemy {
             this.update();
         }
 
-        // if (visuals) {
-        //     this.graphics.originY = 24;
-        //     this.tick = 0;
-        // }
+        if (visuals) {
+            this.graphics.originY = 24;
+            this.tick = 0;
+        }
     }
 
     clone() {
@@ -44,14 +45,14 @@ export default class FlowerEnemy extends Enemy {
             return;
         }
 
-        if (super.ya > 0) {
+        if (this.ya > 0) {
             if (this.y >= this.yStart) {
                 this.y = this.yStart;
-                let xd = parseInt(Math.abs(this.world.mario.x - x));
+                let xd = Math.floor(Math.abs(this.world.mario.x - this.x));
                 this.waitTime++;
                 if (this.waitTime > 40 && xd > 24) {
                     this.waitTime = 0;
-                    super.ya = -1;
+                    this.ya = -1;
                 }
             }
         } else if (this.ya < 0) {

@@ -34,16 +34,16 @@ export default class MarioWorld extends Scene {
     mario;
     level;
     visuals = true;
-    currentTick;
+    currentTick = 0;
     //Status
-    coins;
-    lives;
-    kills;
-    deaths;
-    jumps;
-    items;
-    airStart;
-    airTime;
+    coins = 0;
+    lives = 10;
+    kills = 0;
+    deaths = 0;
+    jumps = 0;
+    items = 0;
+    airStart = 0;
+    airTime = 0;
     lastFrameEvents;
 
     deathBuffer;
@@ -318,30 +318,33 @@ export default class MarioWorld extends Scene {
     revive() {
         // console.log("revive! from", this.mario.x , this.mario.y)
         let newTileX = Math.floor(this.mario.x / 16);
-        let newTileY = Math.floor( this.mario.y / 16);
+        let newTileY = Math.floor(this.mario.y / 16);
         let direction = 1;
         let nobreak = true
         while (nobreak) {
-            if (newTileX < this.level.tileHeight) {
-                //for (y = this.level.tileHeight-2; y >= 8; y--) {
-                for (let y = 0; y <= this.level.tileWidth - 2; y++) {
+            if (newTileX < this.level.tileWidth) {
+                for (let y = this.level.tileHeight-2; y >= 8; y--) {
+                    // console.log("revive y", y)
+                // for (let x = 0; x <= this.level.tileWidth - 2; x++) {
                     if (this.level.standable(newTileX, y)) {
                         newTileY = y;
+                        // console.log("stand", newTileY)
                         nobreak = false;
                         break;
                     }
                 }
-                newTileX += direction;
+                if (nobreak)
+                    newTileX += direction;
 
             } else {
                 direction = -1;
-                newTileX = this.mario.x / 16;
+                newTileX = Math.floor(this.mario.x / 16);
             }
 
         }
 
         this.mario.x = newTileX * 16.0 + 8;
-        this.mario.y = newTileY * 16.0;
+        this.mario.y = newTileY * 16.0 + 8;
         // console.log("to ", this.mario.x, this.mario.y, "tile Y:", newTileY)
         //Death Buffer
         this.deathBuffer = 50;
@@ -508,8 +511,10 @@ export default class MarioWorld extends Scene {
                     if (this.lives > 0) {
                         this.mario.getDrop();
                         this.revive();
-                    } else
+                    } else{
                         this.lose();
+                    }
+                    // console.log("mario fall finish!")
                 } else {
                     this.removeSprite(sprite);
                     if (this.isEnemy(sprite) && sprite.y > MarioGame.height + 32) {

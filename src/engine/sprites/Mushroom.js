@@ -7,7 +7,7 @@ import Assets from "../helper/Assets.js";
 export default class Mushroom extends MarioSprite {
     onGround = false;
     life;
-    graphics;
+    graphics = new MarioImage(Assets.items, 0);
 
      static GROUND_INERTIA = 0.89;
      static AIR_INERTIA = 0.89;
@@ -29,7 +29,7 @@ export default class Mushroom extends MarioSprite {
     }
 
     clone() {
-        m = new Mushroom(false, this.x, this.y);
+        let m = new Mushroom(false, this.x, this.y);
         m.xa = this.xa;
         m.ya = this.ya;
         m.initialCode = this.initialCode;
@@ -191,9 +191,9 @@ export default class Mushroom extends MarioSprite {
 
         this.ya *= 0.85;
         if (this.onGround) {
-            this.xa *= this.GROUND_INERTIA;
+            this.xa *= Mushroom.GROUND_INERTIA;
         } else {
-            this.xa *= this.AIR_INERTIA;
+            this.xa *= Mushroom.AIR_INERTIA;
         }
 
         if (!this.onGround) {

@@ -116,8 +116,8 @@ export default class Shell extends MarioSprite {
      collideCheck() {
         if (!this.alive) return;
 
-        let xMarioD = this.world.mario.this.x - this.x;
-        let yMarioD = this.world.mario.this.y - this.y;
+        let xMarioD = this.world.mario.x - this.x;
+        let yMarioD = this.world.mario.y - this.y;
         if (xMarioD > -16 && xMarioD < 16) {
             if (yMarioD > -this.height && yMarioD < this.world.mario.height) {
                 if (this.world.mario.ya > 0 && yMarioD <= 0 && (!this.world.mario.onGround || !this.world.mario.wasOnGround)) {
@@ -126,7 +126,7 @@ export default class Shell extends MarioSprite {
                         this.xa = 0;
                         this.facing = 0;
                     } else {
-                        this.facing = this.world.mario.this.facing;
+                        this.facing = this.world.mario.facing;
                     }
                 } else {
                     if (this.facing != 0) {
@@ -135,7 +135,7 @@ export default class Shell extends MarioSprite {
                     } else {
                         this.world.addEvent(EventType.KICK, this.type.getValue());
                         this.world.mario.kick(this);
-                        this.facing = this.world.mario.this.facing;
+                        this.facing = this.world.mario.facing;
                     }
                 }
             }

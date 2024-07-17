@@ -118,20 +118,20 @@ export default class Mario extends MarioSprite{
         }
         if (collide) {
             if (xa < 0) {
-                this.x = parseInt ((this.x - this.width) / 16) * 16 + this.width;
+                this.x = Math.floor ((this.x - this.width) / 16) * 16 + this.width;
                 this.xa = 0;
             }
             if (xa > 0) {
-                this.x = parseInt ((this.x + this.width) / 16 + 1) * 16 - this.width - 1;
+                this.x = Math.floor ((this.x + this.width) / 16 + 1) * 16 - this.width - 1;
                 this.xa = 0;
             }
             if (ya < 0) {
-                this.y = parseInt ((this.y - this.height) / 16) * 16 + this.height;
+                this.y = Math.floor ((this.y - this.height) / 16) * 16 + this.height;
                 this.jumpTime = 0;
                 this.ya = 0;
             }
             if (ya > 0) {
-                this.y = parseInt ((this.y - 1) / 16 + 1) * 16 - 1;
+                this.y = Math.floor ((this.y - 1) / 16 + 1) * 16 - 1;
                 this.onGround = true;
             }
             return false;
@@ -501,7 +501,7 @@ export default class Mario extends MarioSprite{
     }
 
     clone() {
-        let sprite = new Mario(false, this.x - 8, y - 15, this.scene, this.type);
+        let sprite = new Mario(false, this.x - 8, this.y - 15, this.scene, this.type);
         sprite.xa = this.xa;
         sprite.ya = this.ya;
         sprite.initialCode = this.initialCode;

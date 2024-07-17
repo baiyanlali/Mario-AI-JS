@@ -20,7 +20,7 @@ export default class MarioImage extends MarioGraphics {
 
         let xPixel = x - this.originX;
         let yPixel = y - this.originY;
-        console.log(this.index, this.index % this.sheet.length, Math.floor(this.index / this.sheet.length))
+        // console.log(this.index, this.index % this.sheet.length, Math.floor(this.index / this.sheet.length))
         let image = this.sheet[this.index % this.sheet.length][Math.floor(this.index / this.sheet.length)];
 
         // if(this.sheet == Assets.smallMario){
