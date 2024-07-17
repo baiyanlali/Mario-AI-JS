@@ -2,9 +2,9 @@ import Enemy from "./Enemy.js";
 import {SpriteType} from "../helper/SpriteType.js";
 
 export default class FlowerEnemy extends Enemy {
-    yStart;
+    yStart = 0;
     tick = 0; 
-    waitTime;
+    waitTime = 0;
 
     constructor( visuals,  x,  y, dir, scene) {
         super(visuals, x, y, 0, scene, SpriteType.ENEMY_FLOWER);
