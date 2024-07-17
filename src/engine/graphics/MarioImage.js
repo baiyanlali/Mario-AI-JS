@@ -1,5 +1,5 @@
 
-import Assets from "../helper/Assets.js";
+import { drawImage } from "../../Util.js";
 import MarioGraphics from "./MarioGraphics.js";
 
 export default class MarioImage extends MarioGraphics {
@@ -31,12 +31,44 @@ export default class MarioImage extends MarioGraphics {
         //     this.flipX, this.flipY)
         // }
         
+        // og.save();
+        // og.scale(
+        //     this.flipX? -1: 1,
+        //     this.flipY? -1: 1,
+        // );
 
-        og.drawImage(image, 
-            xPixel + (this.flipX ? this.width : 0), 
-            yPixel + (this.flipY ? this.height : 0), 
-            this.flipX ? -this.width : this.width, 
-            this.flipY ? -this.height : this.height);
+        // og.scale(
+        //     -1,
+        //     1,
+        // );
+
+        // og.drawImage(image, 
+        //     xPixel + (this.flipX ? this.width : 0), 
+        //     yPixel + (this.flipY ? this.height : 0), 
+        //     this.width, 
+        //     this.height);
+
+        drawImage(
+            og,
+            image, 
+            xPixel, 
+            yPixel, 
+            this.width, 
+            this.height,
+            0,
+            this.flipX,
+            false
+        );
+        // og.drawImage(image, 
+        //     xPixel, 
+        //     yPixel, 
+        //     this.width, 
+        //     this.height,
+        //     0,
+        //     true,
+        //     false
+        // );
+        // og.restore();
     }
 
 }
