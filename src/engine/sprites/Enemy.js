@@ -17,8 +17,8 @@ export default class Enemy extends MarioSprite {
 
     runTime = 0;
     wingTime = 0;
-    wingGraphics
-    graphics
+    wingGraphics = new MarioImage(Assets.enemies, 32);
+    graphics = new MarioImage(Assets.enemies, this.type[1]);
 
     constructor(visuals, x, y, dir, scene, type) {
         super(x, y, scene);
@@ -39,7 +39,6 @@ export default class Enemy extends MarioSprite {
         }
 
         if (visuals) {
-            console.log('enemy type', this.type)
             this.graphics = new MarioImage(Assets.enemies, this.type[1]);
             this.graphics.originX = 8;
             this.graphics.originY = 31;

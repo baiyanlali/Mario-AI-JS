@@ -12,7 +12,7 @@ export default class Shell extends MarioSprite {
       shellType = 0;
       onGround = false;
 
-      graphics;
+      graphics = new MarioImage(Assets.enemies, 0 * 8 + 3);
 
      constructor( visuals,  x,  y,  shellType,  spriteCode) {
         super(x, y, SpriteType.SHELL);

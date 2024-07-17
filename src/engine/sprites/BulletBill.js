@@ -1,9 +1,10 @@
 import MarioSprite from "../core/MarioSprite.js";
-import {GameObjects} from "../../phaser.esm.js";
 import {EventType} from "../helper/EventType.js";
 import Assets from "../helper/Assets.js"; 
+import MarioImage from "../graphics/MarioImage.js";
+import DeathEffect from "../effects/DeathEffect.js";
 export default class BulletBill extends MarioSprite {
-    graphics;
+    graphics = new MarioImage(Assets.enemies, 40);
 
     constructor( visuals,  x,  y,  dir, scene) {
         super(x, y, scene);
@@ -12,10 +13,6 @@ export default class BulletBill extends MarioSprite {
         this.ya = -5;
         this.facing = dir;
 
-        const sprite = new GameObjects.Sprite(this.world, 0, 0, 'enemy', 40)
-        this.add(sprite)
-
-        this.world.add.existing(this)
 
         if (visuals) {
             this.graphics = new MarioImage(Assets.enemies, 40);
@@ -26,7 +23,7 @@ export default class BulletBill extends MarioSprite {
     }
 
     clone() {
-        let sprite = new BulletBill(false, x, y, this.facing, this.world);
+        let sprite = new BulletBill(false, this.x, this.y, this.facing, this.world);
         sprite.xa = this.xa;
         sprite.ya = this.ya;
         sprite.width = this.width;
@@ -42,7 +39,7 @@ export default class BulletBill extends MarioSprite {
         super.update();
         let sideWaysSpeed = 4.0;
         this.xa = this.facing * sideWaysSpeed;
-        this.move(xa, 0);
+        this.move(this.xa, 0);
         if (this.graphics != null) {
             this.graphics.flipX = this.facing == -1;
         }
@@ -50,7 +47,7 @@ export default class BulletBill extends MarioSprite {
 
     render(og) {
         super.render(og);
-        this.graphics.render(og, parseInt (this.x - this.world.cameraX), parseInt (this.y - this.world.cameraY));
+        this.graphics.render(og, Math.floor (this.x - this.world.cameraX), Math.floor (this.y - this.world.cameraY));
     }
 
     collideCheck() {
@@ -61,7 +58,7 @@ export default class BulletBill extends MarioSprite {
         let xMarioD = this.world.mario.x - this.x;
         let yMarioD = this.world.mario.y - this.y;
         if (xMarioD > -16 && xMarioD < 16) {
-            if (yMarioD > -height && yMarioD < this.world.mario.height) {
+            if (yMarioD > -this.height && yMarioD < this.world.mario.height) {
                 if (this.world.mario.ya > 0 && yMarioD <= 0 && (!this.world.mario.onGround || !this.world.mario.wasOnGround)) {
                     this.world.mario.stomp(this);
                     if (this.graphics != null) {
@@ -104,7 +101,7 @@ export default class BulletBill extends MarioSprite {
         let yD = shell.y - this.y;
 
         if (xD > -16 && xD < 16) {
-            if (yD > -height && yD < shell.height) {
+            if (yD > -this.height && yD < shell.height) {
                 if (this.graphics != null) {
                     this.world.addEffect(new DeathEffect(this.x, this.y - 7, this.graphics.flipX, 43, -1));
                 }

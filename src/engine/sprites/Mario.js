@@ -6,7 +6,8 @@ import MarioGame from "../core/MarioGame.js";
 import {SpriteType} from "../helper/SpriteType.js";
 import MarioImage from "../graphics/MarioImage.js";
 import Assets from "../helper/Assets.js";
-
+import MarioWorld from "../core/MarioWorld.js";
+import Fireball from "./Fireball.js";
 export default class Mario extends MarioSprite{
 
 
@@ -17,7 +18,7 @@ export default class Mario extends MarioSprite{
     isDucking;
     canShoot;
     mayJump;
-    actions = null;
+    actions = [];
     jumpTime = 0;
 
     xJumpSpeed;
@@ -27,7 +28,7 @@ export default class Mario extends MarioSprite{
     marioFrameSpeed = 0;
     oldLarge;
     oldFire = false;
-    graphics = null;
+    graphics = new MarioImage(Assets.smallMario, 0);
 
     // stats
     xJumpStart = -100;
@@ -43,7 +44,7 @@ export default class Mario extends MarioSprite{
     type;
 
     constructor(visuals, x, y, scene, type) {
-        super(x + 8, y + 15, scene, type)
+        super(x + 8, y + 15, scene)
         this.isLarge = this.oldLarge = false;
         this.isFire = this.oldFire = false;
         this.width = 4;
@@ -188,7 +189,7 @@ export default class Mario extends MarioSprite{
 
 
         let frameIndex = 0;
-        if (this.currentLarge) {
+        if (currentLarge) {
             frameIndex = (Math.floor(this.marioFrameSpeed / 20)) % 4;
             if (frameIndex == 3)
                 frameIndex = 1;
@@ -217,7 +218,7 @@ export default class Mario extends MarioSprite{
                 frameIndex = currentLarge ? 8 : 7;
         }
 
-        if (this.currentLarge && this.isDucking) {
+        if (currentLarge && this.isDucking) {
             frameIndex = 13;
         }
 

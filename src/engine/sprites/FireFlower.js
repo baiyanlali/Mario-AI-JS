@@ -5,7 +5,7 @@ import Assets from "../helper/Assets.js";
 import { EventType } from "../helper/EventType.js";
 
 export default class FireFlower extends MarioSprite {
-    graphics;
+    graphics = new MarioImage(Assets.items, 1);
     life;
 
     constructor(visuals, x, y) {
@@ -44,7 +44,7 @@ export default class FireFlower extends MarioSprite {
         let yMarioD = this.world.mario.y - this.y;
         if (xMarioD > -16 && xMarioD < 16) {
             if (yMarioD > -this.height && yMarioD < this.world.mario.height) {
-                this.world.addEvent(EventType.COLLECT, this.type.getValue());
+                this.world.addEvent(EventType.COLLECT, this.type[0]);
                 this.world.mario.getFlower();
                 this.world.removeSprite(this);
             }
@@ -63,7 +63,7 @@ export default class FireFlower extends MarioSprite {
             return;
         }
         if (this.graphics != null) {
-            this.graphics.index = 1 + (this.life / 2) % 2;
+            this.graphics.index = 1 + Math.floor(this.life / 2) % 2;
         }
     }
 
