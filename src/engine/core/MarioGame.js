@@ -66,8 +66,10 @@ export default class MarioGame {
      *
      * @param killEvents events that will kill the player
      */
-    constructor(killEvents) {
+    constructor(killEvents = [], lives = 5) {
         this.killEvents = killEvents;
+        this.initialLives = lives;
+        this.lives = lives;
     }
 
 

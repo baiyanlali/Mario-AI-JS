@@ -14,6 +14,25 @@ const DOWN = 'arrowDown'
 const LEFT = 'arrowLeft'
 const RIGHT = 'arrowRight'
 
+
+const actionMap = {
+    // WASD
+    A: MarioActions.LEFT[0],
+    D: MarioActions.RIGHT[0],
+    S: MarioActions.DOWN[0],
+    W: MarioActions.UP[0],
+    J: MarioActions.JUMP[0],
+    K: MarioActions.SPEED[0],
+
+    //ARROW
+    UP: MarioActions.UP[0],
+    DOWN: MarioActions.DOWN[0],
+    LEFT: MarioActions.LEFT[0],
+    RIGHT: MarioActions.RIGHT[0],
+    X: MarioActions.SPEED[0],
+    Z: MarioActions.JUMP[0],
+}
+
 export default class HumanAgent extends MarioAgent {
     actions;
     isPressed = false;

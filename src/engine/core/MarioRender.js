@@ -5,8 +5,11 @@ const TICKS_PER_SECOND = 24;
 export default class MarioRender {
     constructor(scaling_factor = 2) {
         this.size = [256, 240]
-        this.canvas = document.getElementById("mario_canvas")
+        // this.canvas = document.createElement("canvas") document.getElementById("mario_canvas")
+        this.canvas = document.createElement("canvas")
         this.og = this.canvas.getContext("2d")
+        this.canvas.setAttribute("width", this.size[0])
+        this.canvas.setAttribute("height", this.size[1])
 
         this.target_og = document.createElement("canvas")
         this.target_og.setAttribute("width", scaling_factor * this.size[0])

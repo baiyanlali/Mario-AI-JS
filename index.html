@@ -3,11 +3,60 @@
     <meta charset="UTF-8" />
     <title>Mario-JS</title>
     <script type="module" src="src/Play.js"></script>
+
+
+    <style>
+        #touchPanel {
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 200px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            text-align: center;
+            line-height: 200px;
+        }
+    </style>
+
 </head>
 <body>
+    <div id="touchPanel">Touch Panel</div>
+    <script>
+        const touchPanel = document.getElementById('touchPanel');
 
-    <canvas id="mario_canvas" width="256" height="240" style="border:1px solid #d3d3d3;">
-        您的浏览器不支持 HTML5 canvas 标签。
-    </canvas>
+        function handleAction(action, event) {
+            console.log('Action detected:', action, event);
+            // Handle the action here
+        }
 
+        // Detect touch input
+        window.addEventListener('pointerdown', (event) => {
+            if (event.pointerType === 'touch') {
+                touchPanel.style.display = 'block';
+                handleAction('touch', event);
+            }
+        });
+
+        // Detect keyboard input
+        window.addEventListener('keydown', (event) => {
+            touchPanel.style.display = 'none';
+            handleAction('keyboard', event);
+        });
+
+        // Detect gamepad input
+        window.addEventListener('gamepadconnected', (event) => {
+            touchPanel.style.display = 'none';
+            handleAction('gamepad', event);
+        });
+
+        // Detect mouse input
+        window.addEventListener('mousedown', (event) => {
+            if (event.pointerType === 'mouse') {
+                touchPanel.style.display = 'none';
+                handleAction('mouse', event);
+            }
+        });
+    </script>
 </body>
