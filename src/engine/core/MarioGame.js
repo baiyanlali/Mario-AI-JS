@@ -172,7 +172,7 @@ export default class MarioGame {
         let segNum = 0;
         this.world.onUpdate = ()=>{
             if(this.world.gameStatus !== GameStatus.RUNNING){
-                console.log("game end!" + this.world.gameStatus)
+                // console.log("game end!" + this.world.gameStatus)
                 let res = new MarioResult(this.world, gameEvents, agentEvents);
                 if (!resultPath && !replayBreak) {
                     Replay.saveReplay(resultPath, res.getAgentEvents());

@@ -34,7 +34,7 @@ export default class MarioLevel {
             return;
         }
         let lines = level.split("\n");
-        console.log(lines)
+        // console.log(lines)
         this.tileWidth = lines[0].length;
         this.tileHeight = lines.length;
         this.width = this.tileWidth * 16;

@@ -13,7 +13,7 @@ export default class MarioTilemap extends MarioGraphics {
         super()
         this.sheet = sheet;
         this.currentIndeces = currentIndeces;
-        console.log(currentIndeces)
+        // console.log(currentIndeces)
         this.indexShift = New2DArray(currentIndeces.length, currentIndeces[0].length, 0);
         this.moveShift = New2DArray(currentIndeces.length, currentIndeces[0].length, 0);
         this.animationIndex = 0;
