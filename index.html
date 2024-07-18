@@ -24,39 +24,39 @@
 <body>
     <div id="touchPanel">Touch Panel</div>
     <script>
-        const touchPanel = document.getElementById('touchPanel');
+        // const touchPanel = document.getElementById('touchPanel');
 
-        function handleAction(action, event) {
-            console.log('Action detected:', action, event);
-            // Handle the action here
-        }
+        // function handleAction(action, event) {
+        //     console.log('Action detected:', action, event);
+        //     // Handle the action here
+        // }
 
-        // Detect touch input
-        window.addEventListener('pointerdown', (event) => {
-            if (event.pointerType === 'touch') {
-                touchPanel.style.display = 'block';
-                handleAction('touch', event);
-            }
-        });
+        // // Detect touch input
+        // window.addEventListener('pointerdown', (event) => {
+        //     if (event.pointerType === 'touch') {
+        //         touchPanel.style.display = 'block';
+        //         handleAction('touch', event);
+        //     }
+        // });
 
-        // Detect keyboard input
-        window.addEventListener('keydown', (event) => {
-            touchPanel.style.display = 'none';
-            handleAction('keyboard', event);
-        });
+        // // Detect keyboard input
+        // window.addEventListener('keydown', (event) => {
+        //     touchPanel.style.display = 'none';
+        //     handleAction('keyboard', event);
+        // });
 
-        // Detect gamepad input
-        window.addEventListener('gamepadconnected', (event) => {
-            touchPanel.style.display = 'none';
-            handleAction('gamepad', event);
-        });
+        // // Detect gamepad input
+        // window.addEventListener('gamepadconnected', (event) => {
+        //     touchPanel.style.display = 'none';
+        //     handleAction('gamepad', event);
+        // });
 
-        // Detect mouse input
-        window.addEventListener('mousedown', (event) => {
-            if (event.pointerType === 'mouse') {
-                touchPanel.style.display = 'none';
-                handleAction('mouse', event);
-            }
-        });
+        // // Detect mouse input
+        // window.addEventListener('mousedown', (event) => {
+        //     if (event.pointerType === 'mouse') {
+        //         touchPanel.style.display = 'none';
+        //         handleAction('mouse', event);
+        //     }
+        // });
     </script>
 </body>

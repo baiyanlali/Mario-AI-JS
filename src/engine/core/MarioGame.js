@@ -2,11 +2,11 @@ import MarioWorld from "./MarioWorld.js";
 import {GameStatus} from "../helper/GameStatus.js";
 import Replay from "../helper/Replay.js";
 import MarioResult from "./MarioResult.js";
-import * as Phaser from "../../phaser.esm.js";
 import { MarioTimer } from "./MarioTimer.js";
 import MarioAgentEvent from "./MarioAgentEvent.js";
 import HumanAgent from "../../agents/HumanAgent.js";
 import MarioRender from "./MarioRender.js";
+import MarioAgent from "./MarioAgent.js";
 
 export default class MarioGame {
     /**
@@ -51,13 +51,11 @@ export default class MarioGame {
     //visualization
     window = null;
     /**@type {MarioRender} */
-    render = null;
+    render;
     /**@type {MarioAgent} */
-    agent = null;
+    agent;
     /**@type {MarioWorld} */
-    world = null;
-    /**@type {Phaser.Game}*/
-    game;
+    world;
     initialLives;
 
 
@@ -119,7 +117,7 @@ export default class MarioGame {
      */
     async runGame(agent, level, timer, marioState, visuals, fps, scale, resultPath, col) {
         if (visuals) {
-            this.render = new MarioRender()
+            this.render = new MarioRender(1, this.hold_input)
             await this.render.init()
 
             this.world = new MarioWorld(null, {
@@ -127,30 +125,24 @@ export default class MarioGame {
                 active: true,
                 visible: true
             })
-            const config = {
-                width: MarioGame.width,
-                height: MarioGame.height,
-                type: Phaser.AUTO,
-                pixelArt: true,
-                scene: this.world,
-                backgroundColor: "#6d8ffc",
-                fps:{
-                    target:fps
-                }
-            }
-            this.game = new Phaser.Game(config)
-
-
         }
         this.world.level = level;
         this.setAgent(agent);
-        // this.setAgent(humanagent);
 
         this.world.onReady = ()=>{
             this.gameLoop(level, timer, marioState, visuals, fps, resultPath, col)
             const humanagent = new HumanAgent(this.world)
             this.setAgent(humanagent)
         }
+
+        this.world.create()
+        // this.setAgent(humanagent);
+
+        
+    }
+
+    hold_input = (key, isPressed)=>{
+        this.agent.toggleKey(key, isPressed)
     }
 
     gameLoop(level, timer, marioState, visual, fps, resultPath, col) {
@@ -178,7 +170,6 @@ export default class MarioGame {
         let replayBreak = false;
         let cheatBreak = false;
         let segNum = 0;
-
         this.world.onUpdate = ()=>{
             if(this.world.gameStatus !== GameStatus.RUNNING){
                 console.log("game end!" + this.world.gameStatus)
@@ -245,7 +236,6 @@ export default class MarioGame {
             }
 
         }
-
     }
 
     stopGame() {
@@ -253,23 +243,23 @@ export default class MarioGame {
     }
 
 
-    keyPressed(e) {
-        toggleKey(e.getKeyCode(), true);
-    }
+    // keyPressed(e) {
+    //     toggleKey(e.getKeyCode(), true);
+    // }
 
 
-    keyReleased(e) {
-        toggleKey(e.getKeyCode(), false);
-    }
+    // keyReleased(e) {
+    //     toggleKey(e.getKeyCode(), false);
+    // }
 
-    toggleKey(keyCode, isPressed) {
-        if (keyCode == KeyEvent.VK_Q) {
-            if (isPressed) {
-                stopGame();
-                System.out.println("Pressed mg");
-            }
-        }
-    }
+    // toggleKey(keyCode, isPressed) {
+    //     if (keyCode == KeyEvent.VK_Q) {
+    //         if (isPressed) {
+    //             stopGame();
+    //             System.out.println("Pressed mg");
+    //         }
+    //     }
+    // }
 
     setLives(lives) {
         this.initialLives = lives;

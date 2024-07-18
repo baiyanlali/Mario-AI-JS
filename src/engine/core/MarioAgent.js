@@ -23,4 +23,6 @@ export default class MarioAgent {
      * @return
      */
     getAgentName(){}
+
+    toggleKey(key, isPressed){}
 }

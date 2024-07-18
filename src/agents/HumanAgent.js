@@ -20,12 +20,10 @@ const actionMap = {
     A: MarioActions.LEFT[0],
     D: MarioActions.RIGHT[0],
     S: MarioActions.DOWN[0],
-    W: MarioActions.UP[0],
     J: MarioActions.JUMP[0],
     K: MarioActions.SPEED[0],
 
     //ARROW
-    UP: MarioActions.UP[0],
     DOWN: MarioActions.DOWN[0],
     LEFT: MarioActions.LEFT[0],
     RIGHT: MarioActions.RIGHT[0],
@@ -47,13 +45,13 @@ export default class HumanAgent extends MarioAgent {
     constructor(gameScene) {
         super();
         this.actions = new Array(5)
-        gameScene.input.keyboard.on('keydown', event => {
-            this.toggleKey(event.key, true)
-        });
+        // gameScene.input.keyboard.on('keydown', event => {
+        //     this.toggleKey(event.key, true)
+        // });
 
-        gameScene.input.keyboard.on('keyup', event => {
-            this.toggleKey(event.key, false)
-        });
+        // gameScene.input.keyboard.on('keyup', event => {
+        //     this.toggleKey(event.key, false)
+        // });
     }
 
     toggleKey(key, isPressed) {

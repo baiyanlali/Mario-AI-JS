@@ -3,7 +3,6 @@ import {GameStatus} from "../helper/GameStatus.js";
 import {New2DArray} from "../../Util.js";
 import MarioLevel from "./MarioLevel.js";
 import Mario from "../sprites/Mario.js";
-import {Scene} from "../../phaser.esm.js";
 import {EventType} from "../helper/EventType.js";
 import {SpriteType, spawnSprite} from "../helper/SpriteType.js";
 import {TileFeature} from "../helper/TileFeature.js";
@@ -21,7 +20,7 @@ import { BrickEffect } from "../effects/BrickEffect.js";
 import FireFlower from "../sprites/FireFlower.js";
 import FireballEffect from "../effects/FireballEffect.js";
 
-export default class MarioWorld extends Scene {
+export default class MarioWorld{
     static onlineTimerMax = 100000;
 
 
@@ -58,15 +57,14 @@ export default class MarioWorld extends Scene {
     removedSprites;
 
     effects;
-    onReady = null;
-    onUpdate = ()=> {};
+    onReady = ()=> {};
+    onUpdate;
     camera;
     backgrounds = [1, 2];
     //    revivable = false;
     //    totalEnemies;
 
     constructor(killEvents, config) {
-        super(config);
         this.pauseTimer = 0;
         this.gameStatus = GameStatus.RUNNING;
         this.sprites = [];
@@ -81,20 +79,10 @@ export default class MarioWorld extends Scene {
         this.kills = 0;
         this.deaths = 0;
         this.deathBuffer = 0;
+        this.onUpdate = null;
+
     }
 
-    preload() {
-        this.load.image('tiles', 'assets/mapsheet.png')
-        this.load.spritesheet('mario', 'assets/mariosheet.png', {frameWidth: 32, frameHeight: 32})
-        // this.load.image('mario', 'assets/mariosheet.png')
-        this.load.spritesheet('item', 'assets/itemsheet.png', {frameWidth: 8, frameHeight: 8})
-        this.load.spritesheet('particle', 'assets/particlesheet.png', {frameWidth: 16, frameHeight: 16})
-        this.load.spritesheet('font', 'assets/font.gif', {frameWidth: 8, frameHeight: 8})
-        this.load.spritesheet('enemy', 'assets/enemysheet.png', {frameWidth: 16, frameHeight: 32})
-        this.load.spritesheet('smallmario', 'assets/smallmariosheet.png', {frameWidth: 16, frameHeight: 16})
-        this.load.spritesheet('firemario', 'assets/firemariosheet.png', {frameWidth: 32, frameHeight: 32})
-        // this.load.tilemapTiledJSON('bg', 'assets/tilesets/mario-map.tsj')
-    }
 
     create() {
         this.pauseTimer = 0;
@@ -113,23 +101,18 @@ export default class MarioWorld extends Scene {
         this.deathBuffer = 0;
 
 
-        this.anims.create({
-            key: "enemy-walk",
-            frames: this.anims.generateFrameNumbers('enemy', {start: 16, end: 17, first: 16}),
-            frameRate: 16,
-            repeat: -1
-        })
 
         this.initializeVisuals()
 
         this.initializeLevel()
 
 
-        this.camera_offset = this.cameras.main.scrollX - this.mario.x
-
         if (this.onReady !== null && this.onReady !== undefined) {
             this.onReady()
         }
+        this.update_id = setInterval(this.update.bind(this), 30);
+
+        // this.update()
     }
 
     timeCnt = 0
@@ -138,12 +121,7 @@ export default class MarioWorld extends Scene {
 
     update(t, d) {
         if (this.onUpdate !== null && this.onUpdate !== undefined) {
-            this.timeCnt += d
-            if(this.timeCnt > this.timeMax){
-                this.timeCnt -= this.timeMax
-                this.onUpdate()
-            }
-            // this.cameras.main.scrollX = this.mario.x + this.camera_offset
+            this.onUpdate()
         }
     }
 
@@ -162,10 +140,6 @@ export default class MarioWorld extends Scene {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ]
 
-        const map1 = this.make.tilemap({data: bg2, tileWidth: 16, tileHeight: 16})
-        map1.addTilesetImage("tiles", "tiles", 16, 16)
-        const background = map1.createLayer(0, "tiles", 0, 0)
-
 
         this.backgrounds[0] = new MarioBackground(null, MarioGame.width, bg1)
         this.backgrounds[1] = new MarioBackground(null, MarioGame.width, bg2)
@@ -179,10 +153,6 @@ export default class MarioWorld extends Scene {
         this.currentTimer = timer;
         this.level = new MarioLevel(level, this.visuals);
 
-
-        const leveltile = this.make.tilemap({data: this.level.levelTiles, tileWidth: 16, tileHeight: 16})
-        leveltile.addTilesetImage("tiles", "tiles", 16, 16)
-        const currground = leveltile.createLayer(0, "tiles", 0, 0)
 
         // 这里x和y反过来了
         this.mario = new Mario(this.visuals, this.level.marioTileX * 16, this.level.marioTileY * 16, this, "mplayer");
