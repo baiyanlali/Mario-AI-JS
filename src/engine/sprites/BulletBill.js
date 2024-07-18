@@ -66,7 +66,7 @@ export default class BulletBill extends MarioSprite {
                     }
                     this.world.removeSprite(this);
                 } else {
-                    this.world.addEvent(EventType.HURT, this.type.getValue());
+                    this.world.addEvent(EventType.HURT, this.type[0]);
                     this.world.mario.getHurt();
                 }
             }
@@ -105,7 +105,7 @@ export default class BulletBill extends MarioSprite {
                 if (this.graphics != null) {
                     this.world.addEffect(new DeathEffect(this.x, this.y - 7, this.graphics.flipX, 43, -1));
                 }
-                this.world.addEvent(EventType.SHELL_KILL, this.type.getValue());
+                this.world.addEvent(EventType.SHELL_KILL, this.type[0]);
                 this.world.removeSprite(this);
                 return true;
             }

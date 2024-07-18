@@ -17,7 +17,7 @@ export default class MarioEvent {
     }
 
     getEventType() {
-        return this.eventType.getValue();
+        return this.eventType;
     }
 
     getEventParam() {

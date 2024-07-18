@@ -130,10 +130,10 @@ export default class Shell extends MarioSprite {
                     }
                 } else {
                     if (this.facing != 0) {
-                        this.world.addEvent(EventType.HURT, this.type.getValue());
+                        this.world.addEvent(EventType.HURT, this.type);
                         this.world.mario.getHurt();
                     } else {
-                        this.world.addEvent(EventType.KICK, this.type.getValue());
+                        this.world.addEvent(EventType.KICK, this.type);
                         this.world.mario.kick(this);
                         this.facing = this.world.mario.facing;
                     }
@@ -259,7 +259,7 @@ export default class Shell extends MarioSprite {
 
         if (xD > -16 && xD < 16) {
             if (yD > -this.height && yD < shell.height) {
-                this.world.addEvent(EventType.SHELL_KILL, this.type.getValue());
+                this.world.addEvent(EventType.SHELL_KILL, this.type);
                 if (this != shell) {
                     this.world.removeSprite(shell);
                 }

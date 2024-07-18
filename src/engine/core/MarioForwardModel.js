@@ -378,7 +378,7 @@ export default class MarioForwardModel {
         let enemiesAlive = this.world.getEnemies();
         let enemyPos = new Array(enemiesAlive.length * 3);
         for (let i = 0; i < enemiesAlive.size(); i++) {
-            enemyPos[3 * i] = enemiesAlive.get(i).type.getValue();
+            enemyPos[3 * i] = enemiesAlive.get(i).type[0];
             enemyPos[3 * i + 1] = enemiesAlive.get(i).x;
             enemyPos[3 * i + 2] = enemiesAlive.get(i).y;
         }

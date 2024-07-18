@@ -1,6 +1,5 @@
 import MarioGame from "./engine/core/MarioGame.js";
 import Replay from "./engine/helper/Replay.js";
-import {New2DArray} from "./Util.js";
 
 async function getLevel(filepath) {
     let response = await fetch(filepath)

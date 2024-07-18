@@ -82,7 +82,7 @@ export default class MarioResult {
         let kills = 0;
         for (let e in this.gameEvents) {
             if (e.getEventType() === EventType.STOMP_KILL || e.getEventType() === EventType.FIRE_KILL ||
-                e.getEventType() === EventType.FALL_KILL || e.getEventType() === EventType.SHELL_KILL.getValue()) {
+                e.getEventType() === EventType.FALL_KILL || e.getEventType() === EventType.SHELL_KILL) {
                 kills += 1;
             }
         }
@@ -97,7 +97,7 @@ export default class MarioResult {
     getKillsByFire() {
         let kills = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.FIRE_KILL.getValue()) {
+            if (e.getEventType() === EventType.FIRE_KILL) {
                 kills += 1;
             }
         }
@@ -112,7 +112,7 @@ export default class MarioResult {
     getKillsByStomp() {
         let kills = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.STOMP_KILL.getValue()) {
+            if (e.getEventType() === EventType.STOMP_KILL) {
                 kills += 1;
             }
         }
@@ -127,7 +127,7 @@ export default class MarioResult {
     getKillsByShell() {
         let kills = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.SHELL_KILL.getValue()) {
+            if (e.getEventType() === EventType.SHELL_KILL) {
                 kills += 1;
             }
         }
@@ -145,7 +145,7 @@ export default class MarioResult {
         for (let e in this.gameEvents) {
             if ((e.getEventType() === EventType.SHELL_KILL
                 || e.getEventType() === EventType.FIRE_KILL
-                || e.getEventType() === EventType.STOMP_KILL.getValue()) && e.getEventParam() === enemyType) {
+                || e.getEventType() === EventType.STOMP_KILL) && e.getEventParam() === enemyType) {
                 kills += 1;
             }
         }
@@ -160,7 +160,7 @@ export default class MarioResult {
     getMarioNumHurts() {
         let hurt = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.HURT.getValue()) {
+            if (e.getEventType() === EventType.HURT) {
                 hurt += 1;
             }
         }
@@ -205,7 +205,7 @@ export default class MarioResult {
     getKillsByFall() {
         let kills = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.FALL_KILL.getValue()) {
+            if (e.getEventType() === EventType.FALL_KILL) {
                 kills += 1;
             }
         }
@@ -220,7 +220,7 @@ export default class MarioResult {
     getNumJumps() {
         let jumps = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.JUMP.getValue()) {
+            if (e.getEventType() === EventType.JUMP) {
                 jumps += 1;
             }
         }
@@ -236,10 +236,10 @@ export default class MarioResult {
         let maxXJump = 0;
         let startX = -100;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.JUMP.getValue()) {
+            if (e.getEventType() === EventType.JUMP) {
                 startX = e.getMarioX();
             }
-            if (e.getEventType() === EventType.LAND.getValue()) {
+            if (e.getEventType() === EventType.LAND) {
                 if (Math.abs(e.getMarioX() - startX) > maxXJump) {
                     maxXJump = Math.abs(e.getMarioX() - startX);
                 }
@@ -257,10 +257,10 @@ export default class MarioResult {
         let maxAirJump = 0;
         let startTime = -100;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.JUMP.getValue()) {
+            if (e.getEventType() === EventType.JUMP) {
                 startTime = e.getTime();
             }
-            if (e.getEventType() === EventType.LAND.getValue()) {
+            if (e.getEventType() === EventType.LAND) {
                 if (e.getTime() - startTime > maxAirJump) {
                     maxAirJump = e.getTime() - startTime;
                 }
@@ -295,7 +295,7 @@ export default class MarioResult {
     getNumCollectedMushrooms() {
         let collect = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.COLLECT && e.getEventParam() === SpriteType.MUSHROOM.getValue()) {
+            if (e.getEventType() === EventType.COLLECT && e.getEventParam() === SpriteType.MUSHROOM) {
                 collect += 1;
             }
         }
@@ -310,7 +310,7 @@ export default class MarioResult {
     getNumCollectedFireflower() {
         let collect = 0;
         for (let e in this.gameEvents) {
-            if (e.getEventType() === EventType.COLLECT && e.getEventParam() === SpriteType.FIRE_FLOWER.getValue()) {
+            if (e.getEventType() === EventType.COLLECT && e.getEventParam() === SpriteType.FIRE_FLOWER) {
                 collect += 1;
             }
         }
