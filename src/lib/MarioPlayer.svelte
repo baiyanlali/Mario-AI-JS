@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "../app.css";
     import { onDestroy, onMount } from "svelte";
     import HumanAgent from "../logics/agents/HumanAgent.js";
     import MarioGame from "../logics/engine/core/MarioGame.js";
@@ -49,4 +50,13 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX--XXXXXXXXX
     })
 </script>
 
-<div bind:this={game_div}></div>
+<div class="grid grid-cols-1 gap-4">
+    <div bind:this={game_div}>
+
+    </div>
+</div>
+
+
+<style lang="postcss">
+    @refernce "tailwindcss/theme";
+</style>
